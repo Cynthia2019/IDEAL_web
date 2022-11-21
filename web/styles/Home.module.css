@@ -1,0 +1,31 @@
+.body {
+    margin: 30px 10px;
+    display: flex;
+    width: 100%;
+    border: 1px solid red;
+    min-height: 100vh;
+}
+
+.mainPlot {
+    width: 70%;
+    border: 1px solid blue; 
+}
+
+.mainPlotHeader {
+    display: flex;
+    flex-direction: column;
+    height: 20%;
+}
+.mainPlotTitle {
+    font-size: 30px;
+    font-weight: bold;
+    margin: 0
+}
+.mainPlotSub {
+    font-size: 16px;
+    font-weight: 200;
+}
+.selectors {
+    width: 30%; 
+    border: 1px solid green
+}
