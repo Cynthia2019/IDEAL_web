@@ -43,7 +43,7 @@ class Scatter {
     this.yAxisGroup = this.svg.append("g");
 
     d3.csv(
-      "../data/sample.csv"
+      "https://gist.githubusercontent.com/Cynthia2019/94aadbe0146bcdcc737534d1a6fbb925/raw/bb96d3bc0daeefa1005dd1671b700a4fdd8c99e4/ideal_2d_data.csv"
     ).then((data) => {
       this.data = data;
       this.update(data, this.setData, "Minimal directional Young's modulus [N/m]", "Maximal directional Young's modulus [N/m]");
@@ -56,7 +56,9 @@ class Scatter {
     this.setData = setData;
     this.query1 = query1;
     this.query2 = query2;
-    this.setData(this.data);
+    if(setData != undefined) {
+        this.setData(this.data);
+    }
 
     let res = [];
 
