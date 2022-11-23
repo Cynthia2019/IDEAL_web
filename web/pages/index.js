@@ -1,22 +1,62 @@
-import { useContext, useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Header from "../components/header";
 import styles from "../styles/Home.module.css";
 import ChartWrapper from "../components/ChartWrapper";
-import Pyodide from "../components/pyodide";
-//import { PyodideContext } from "../components/pyodide-provider";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import NativeSelect from "@mui/material/NativeSelect";
+import Select from '@mui/material/Select';
+import { styled } from '@mui/material/styles';
+import InputBase from '@mui/material/InputBase';
+
+const BootstrapInput = styled(InputBase)(({ theme }) => ({
+  'label + &': {
+    marginTop: theme.spacing(3),
+  },
+  '& .MuiInputBase-input': {
+    borderRadius: 4,
+    position: 'relative',
+    backgroundColor: theme.palette.background.paper,
+    border: '1px solid #ced4da',
+    fontSize: 16,
+    padding: '10px 26px 10px 12px',
+    transition: theme.transitions.create(['border-color', 'box-shadow']),
+    // Use the system font instead of the default Roboto font.
+    fontFamily: [
+      '-apple-system',
+      'BlinkMacSystemFont',
+      '"Segoe UI"',
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif',
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(','),
+    '&:focus': {
+      borderRadius: 4,
+      borderColor: '#80bdff',
+      boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
+    },
+  },
+}));
 
 export default function Home() {
   const [initialData, setInitialData] = useState([]);
-  const [query1, setQuery1] = useState(
-    "Minimal directional Young's modulus [N/m]"
-  );
-  const [query2, setQuery2] = useState(
-    "Maximal directional Young's modulus [N/m]"
-  );
+
+  const [query1, setQuery1] = useState("C11");
+  const [query2, setQuery2] = useState("C22");
+  const [dataset, setDataset] = useState("");
+
+  const handleDatasetChange = (e) => {
+    setDataset(e.target.value);
+  };
 
   return (
     <div>
-      <Header/>
+      <Header />
       <div className={styles.body}>
         <div className={styles.mainPlot}>
           <div className={styles.mainPlotHeader}>
@@ -28,8 +68,77 @@ export default function Home() {
               double-click to reset.
             </p>
           </div>
+          <ChartWrapper
+            data={initialData}
+            setData={setInitialData}
+            query1={query1}
+            query2={query2}
+          />
+        </div>
+        <div className={styles.selectors}>
+          <div className={styles["data-selector"]}>
+            <div className={styles["data-content-line"]}>
+              <p className={styles["data-title"]}>Data</p>
+              <FormControl>
+                <InputLabel htmlFor="dataset-select-label" variant="standard">
+                  Northwestern Free-Form Metamaterial Dataset
+                </InputLabel>
+                <NativeSelect
+                  inputProps={{
+                    name: "dataset",
+                    id: "dataset-select-label",
+                  }}
+                  value={dataset}
+                  label="Dataset"
+                  autoWidth
+                  onChange={handleDatasetChange}
+                >
+                  <option value={"Northwestern Free-Form Metamaterial Dataset"}>
+                    Northwestern Free-Form Metamaterial Dataset
+                  </option>
+                </NativeSelect>
+              </FormControl>
+            </div>
+            <div className={styles["data-content-line"]}>
+              <p>x-axis data</p>
+              <FormControl variant="standard" fullWidth>
+                <InputLabel id="x-axis-select-label">C11</InputLabel>
+                <Select
+                  labelId="x-axis-select-label"
+                  id="x-axis-select"
+                  value="C11"
+                  onChange={setQuery1}
+                  input={<BootstrapInput />}
+                >
+                  <MenuItem value={"C11"}>C11</MenuItem>
+                </Select>
+              </FormControl>
+            </div>
+            <div className={styles["data-content-line"]}>
+              <p>y-axis data</p>
+              <FormControl variant="standard" fullWidth>
+                <InputLabel id="y-axis-select-label">C12</InputLabel>
+                <Select
+                  labelId="y-axis-select-label"
+                  id="y-axis-select"
+                  value="C12"
+                  onChange={setQuery2}
+                  input={<BootstrapInput />}
+                >
+                  <MenuItem value={"C12"}>C12</MenuItem>
+                </Select>
+              </FormControl>
+            </div>
+          </div>
+          <div className={styles["property-range"]}></div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-          <div>
+/*
+ <div>
             <Pyodide
             id={1}
             pythonCode={"import numpy as np\n" +
@@ -202,19 +311,5 @@ export default function Home() {
                 "\n" +
                 "\n"}
             />
-          </div>
-
-
-          <ChartWrapper
-            data={initialData}
-            setData={setInitialData}
-            query1={query1}
-            query2={query2}
-          />
-
-        </div>
-        <div className={styles.selectors}></div>
-      </div>
-    </div>
-  );
-}
+            </div>
+*/

@@ -8,12 +8,13 @@ const ChartWrapper = ({ data, setData, query1, query2 }) => {
   useEffect(() => {
     if (!chart) {
       setChart(new Scatter(chartArea.current, data));
-    } else {
+    } 
+    else {
       chart.update(data, setData, query1, query2);
     }
-  }, [chart, query1, query2]);
+  }, []);
 
-  return <div className="chart-area" ref={chartArea}></div>;
+  return <div className="chart-area" ref={chartArea}></div>
 };
 
 export default ChartWrapper;

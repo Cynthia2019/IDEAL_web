@@ -8,7 +8,7 @@ export default function Pyodide({
   loadingMessage = 'loading...',
   evaluatingMessage = 'evaluating...'
 }) {
-  const indexURL = 'https://cdn.jsdelivr.net/pyodide/v0.21.3/full/'
+  const indexURL = 'https://cdn.jsdelivr.net/pyodide/dev/full/'
   const {
     pyodide,
     hasLoadPyodideBeenCalled,
@@ -60,7 +60,7 @@ export default function Pyodide({
   return (
     <>
       <Head>
-        <script src={`${indexURL}pyodide.js`} />
+        <script src={`${indexURL}pyodide.js`}/>
       </Head>
       <div id={id}>
         Pyodide Output: {isPyodideLoading ? loadingMessage : pyodideOutput}

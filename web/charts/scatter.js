@@ -1,10 +1,10 @@
 import * as d3 from "d3";
 
 const MARGIN = {
-  TOP: 10,
-  RIGHT: 10,
-  BOTTOM: 10,
-  LEFT: 10,
+  TOP: 100,
+  RIGHT: 50,
+  BOTTOM: 100,
+  LEFT: 100,
 };
 const WIDTH = 800 - MARGIN.LEFT - MARGIN.RIGHT;
 const HEIGHT = 800 - MARGIN.TOP - MARGIN.BOTTOM;
@@ -29,10 +29,9 @@ class Scatter {
     this.yLabel = this.svg
       .append("text")
       .attr("x", -HEIGHT / 2)
-      .attr("y", -50)
+      .attr("y", -80)
       .attr("text-anchor", "middle")
-      .attr("transform", "rotate(-90)")
-      .text("Number of Viewers");
+      .attr("transform", "rotate(-90)");
 
     // Append group el to display both axes
     this.xAxisGroup = this.svg
@@ -45,8 +44,20 @@ class Scatter {
     d3.csv(
       "https://gist.githubusercontent.com/Cynthia2019/94aadbe0146bcdcc737534d1a6fbb925/raw/bb96d3bc0daeefa1005dd1671b700a4fdd8c99e4/ideal_2d_data.csv"
     ).then((data) => {
-      this.data = data;
-      this.update(data, this.setData, "Minimal directional Young's modulus [N/m]", "Maximal directional Young's modulus [N/m]");
+      this.data = data.map((d) => ({
+        C11: parseFloat(d.C11),
+        C12: parseFloat(d.C12), 
+        C22: parseFloat(d.C22),
+        C16: parseFloat(d.C16),
+        C26: parseFloat(d.C26), 
+        C66: parseFloat(d.C66), 
+        condition: d.condition,
+        symmetry: d.symmetry, 
+        material_0: d.CM0,
+        material_1: d.CM1
+
+      }));
+      this.update(this.data, this.setData, "C11", "C12");
     });
   }
   //query1: x-axis
@@ -56,37 +67,41 @@ class Scatter {
     this.setData = setData;
     this.query1 = query1;
     this.query2 = query2;
-    if(setData != undefined) {
+    if(this.setData) {
         this.setData(this.data);
     }
 
     let res = [];
-
-    switch (this.query2) {
-      case "Maximal directional Young's modulus [N/m]":
-        res = this.data; 
-        break;
-      default:
-        break;
-    }
-
-    const y = d3
+    res = this.data.map((d) => [d[query1], d[query2]]);
+    const yScale = d3
       .scaleLinear()
-      .domain([0, d3.max(res, (d) => d[this.query2])])
-      // Flip left axis values to ascend
-      // rather than to descend by default.
-      .range([0, HEIGHT]);
+      .domain([d3.min(res, (d) => d[1]), d3.max(res, (d) => d[1])])
+      .range([HEIGHT, 0]);
 
-    const x = d3
+    const xScale = d3
       .scaleLinear()
-      .domain([0, res.map((d) => d[this.query1])])
+       .domain([d3.min(res, (d) => d[0]), d3.max(res, (d) => d[0])])
       .range([0, WIDTH]);
 
-    const xAxisCall = d3.axisBottom(x);
+    const xAxisCall = d3.axisBottom(xScale);
     this.xAxisGroup.transition().duration(500).call(xAxisCall);
 
-    const yAxisCall = d3.axisLeft(y);
+    const yAxisCall = d3.axisLeft(yScale);
     this.yAxisGroup.transition().duration(500).call(yAxisCall);
+    this.xLabel.text(this.query1);
+    this.yLabel.text(this.query2);
+    const circles = this.svg.selectAll("circle").data(res);
+    circles
+      .enter()
+      .append("circle")
+      .merge(circles)
+      .attr("r", 2)
+      .attr("fill", '#8A8BD0')
+      .style("fill-opacity", 0.3)
+      .transition()
+      .duration(500)
+      .attr("cx", (d) => xScale(d[0]))
+      .attr("cy", (d) => yScale(d[1]))
   }
 }
 
