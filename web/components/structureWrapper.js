@@ -13,7 +13,7 @@ const StructureWrapper = ({ data }) => {
     }
   }, [chart, data]);
 
-  return <div className="structure-plot" ref={chartArea}></div>
+  return <div id="structure-plot" ref={chartArea}></div>
 };
 
 export default StructureWrapper;

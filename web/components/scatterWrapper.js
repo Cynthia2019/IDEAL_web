@@ -10,11 +10,11 @@ const ScatterWrapper = ({ data, setDataPoint, query1, query2 }) => {
       setChart(new Scatter(chartArea.current, data, setDataPoint));
     } 
     else {
-      chart.update(chartArea.current, data, setDataPoint, query1, query2);
+      chart.update(data, setDataPoint, query1, query2);
     }
   }, [chart, query1, query2, data]);
 
-  return <div className="chart-area" ref={chartArea}></div>
+  return <div id="main-plot" ref={chartArea}></div>
 };
 
 export default ScatterWrapper;
