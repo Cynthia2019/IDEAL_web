@@ -11,6 +11,7 @@ import Select from "@mui/material/Select";
 import { styled } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import { csv } from "d3";
+import dynamic from 'next/dynamic'
 
 const BootstrapInput = styled(InputBase)(({ theme }) => ({
   "label + &": {
@@ -51,6 +52,10 @@ export default function Home() {
   const [query1, setQuery1] = useState("C11");
   const [query2, setQuery2] = useState("C12");
   const [dataset, setDataset] = useState("");
+
+  const Youngs = dynamic(() => import('../components/youngs'), {
+    ssr: false
+})
 
   const handleDatasetChange = (e) => {
     setDataset(e.target.value);
@@ -158,6 +163,12 @@ export default function Home() {
           <div className={styles["property-range"]}></div>
         </div>
       </div>
+
+      <div>
+        <div>
+          <Youngs/>
+        </div>
+          </div>
     </div>
   );
 }
