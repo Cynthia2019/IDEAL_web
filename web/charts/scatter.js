@@ -66,16 +66,16 @@ class Scatter {
     this.yAxisGroup.transition().duration(500).call(yAxisCall);
     this.xLabel.text(this.query1);
     this.yLabel.text(this.query2);
-    const tooltip = d3
-      .select(element)
-      .append("div")
-      .style("opacity", 0)
-      .attr("class", "tooltip")
-      .style("background-color", "white")
-      .style("border", "solid")
-      .style("border-width", "1px")
-      .style("border-radius", "5px")
-      .style("padding", "10px");
+    // const tooltip = d3
+    //   .select(element)
+    //   .append("div")
+    //   .style("opacity", 0)
+    //   .attr("class", "tooltip")
+    //   .style("background-color", "white")
+    //   .style("border", "solid")
+    //   .style("border-width", "1px")
+    //   .style("border-radius", "5px")
+    //   .style("padding", "10px");
     var mouseover = function (d, i) {
       d3.select(this).transition()
            .duration('100')
@@ -83,23 +83,18 @@ class Scatter {
  }
 
     var mousemove = function (d) {
-      tooltip
-        .html(`${query1}` + d[query1])
-        .html(`${query2}` + d[query2])
-        .style("left", d3.mouse(d)[0] + 90 + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
-        .style("top", d3.mouse(d)[1] + "px");
+
     };
 
     // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
     var mouseleave = function (d, i) {
-      d3.select(this).transition()
-           .duration('200')
-           .attr("r", 2);
+      // d3.select(this).transition()
+      //      .duration('200')
+      //      .attr("r", 2);
  };
 
     var mouseclick = function(d) {
       console.log(d)
-      tooltip.style("opacity", 1);
       setDataPoint(d); 
     }
 
@@ -116,10 +111,14 @@ class Scatter {
       .attr("cx", (d) => xScale(d[query1]))
       .attr("cy", (d) => yScale(d[query2]))
 
-    circles.on("mouseover", mouseover )
-    .on("mousemove", mousemove )
-    .on("mouseleave", mouseleave )
-    .on("click", mouseclick)
+    // circles.on("mouseover", mouseover )
+    // .on("mousemove", mousemove )
+    // .on("mouseleave", mouseleave )
+    // .on("click", mouseclick)
+
+    circles.on("click", function(d, i) {
+      setDataPoint(i); 
+    })
 
     circles.exit().remove();
   }

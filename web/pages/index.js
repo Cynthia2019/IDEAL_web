@@ -46,8 +46,7 @@ const BootstrapInput = styled(InputBase)(({ theme }) => ({
 
 export default function Home() {
   const [initialData, setInitialData] = useState([]);
-  const [geometry, setGeometry] = useState('')
-  const [dataPoint, setDataPoint] = useState(null); 
+  const [dataPoint, setDataPoint] = useState({}); 
 
   const [query1, setQuery1] = useState("C11");
   const [query2, setQuery2] = useState("C12");
@@ -99,7 +98,7 @@ export default function Home() {
             query2={query2}
           />
           <div className={styles.subPlots}>
-            <StructureWrapper data={initialData}/>
+            <StructureWrapper data={dataPoint}/>
           </div>
         </div>
         <div className={styles.selectors}>
