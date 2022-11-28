@@ -10,7 +10,7 @@ const WIDTH = 900 - MARGIN.LEFT - MARGIN.RIGHT;
 const HEIGHT = 900 - MARGIN.TOP - MARGIN.BOTTOM;
 
 class Scatter {
-  constructor(element, data, query1, query2) {
+  constructor(element, data, setDataPoint) {
     this.svg = d3
       .select(element)
       .append("svg")
@@ -41,24 +41,22 @@ class Scatter {
     // Append group el to display both axes
     this.yAxisGroup = this.svg.append("g");
 
-    this.update(data, "C11", "C12");
+    this.update(element, data, setDataPoint, "C11", "C12");
   }
   //query1: x-axis
   //query2: y-axis
-  update(data, query1, query2) {
+  update(element, data, setDataPoint, query1, query2) {
     this.data = data;
     this.query1 = query1;
     this.query2 = query2;
-    let res = [];
-    res = this.data.map((d) => [d[query1], d[query2]]);
     const yScale = d3
       .scaleLinear()
-      .domain([d3.min(res, (d) => d[1]), d3.max(res, (d) => d[1])])
+      .domain([d3.min(this.data, (d) => d[query2]), d3.max(this.data, (d) => d[query2])])
       .range([HEIGHT, 0]);
 
     const xScale = d3
       .scaleLinear()
-       .domain([d3.min(res, (d) => d[0]), d3.max(res, (d) => d[0])])
+      .domain([d3.min(this.data, (d) => d[query1]), d3.max(this.data, (d) => d[query1])])
       .range([0, WIDTH]);
 
     const xAxisCall = d3.axisBottom(xScale);
@@ -68,18 +66,60 @@ class Scatter {
     this.yAxisGroup.transition().duration(500).call(yAxisCall);
     this.xLabel.text(this.query1);
     this.yLabel.text(this.query2);
-    const circles = this.svg.selectAll("circle").data(res);
+    const tooltip = d3
+      .select(element)
+      .append("div")
+      .style("opacity", 0)
+      .attr("class", "tooltip")
+      .style("background-color", "white")
+      .style("border", "solid")
+      .style("border-width", "1px")
+      .style("border-radius", "5px")
+      .style("padding", "10px");
+    var mouseover = function (d, i) {
+      d3.select(this).transition()
+           .duration('100')
+           .attr("r", 5);
+ }
+
+    var mousemove = function (d) {
+      tooltip
+        .html(`${query1}` + d[query1])
+        .html(`${query2}` + d[query2])
+        .style("left", d3.mouse(d)[0] + 90 + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
+        .style("top", d3.mouse(d)[1] + "px");
+    };
+
+    // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
+    var mouseleave = function (d, i) {
+      d3.select(this).transition()
+           .duration('200')
+           .attr("r", 2);
+ };
+
+    var mouseclick = function(d) {
+      console.log(d)
+      tooltip.style("opacity", 1);
+      setDataPoint(d); 
+    }
+
+    const circles = this.svg.selectAll("circle").data(this.data);
     circles
       .enter()
       .append("circle")
       .merge(circles)
       .attr("r", 2)
-      .attr("fill", '#8A8BD0')
+      .attr("fill", "#8A8BD0")
       .style("fill-opacity", 0.3)
       .transition()
       .duration(500)
-      .attr("cx", (d) => xScale(d[0]))
-      .attr("cy", (d) => yScale(d[1]))
+      .attr("cx", (d) => xScale(d[query1]))
+      .attr("cy", (d) => yScale(d[query2]))
+
+    circles.on("mouseover", mouseover )
+    .on("mousemove", mousemove )
+    .on("mouseleave", mouseleave )
+    .on("click", mouseclick)
 
     circles.exit().remove();
   }

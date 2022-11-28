@@ -47,6 +47,7 @@ const BootstrapInput = styled(InputBase)(({ theme }) => ({
 export default function Home() {
   const [initialData, setInitialData] = useState([]);
   const [geometry, setGeometry] = useState('')
+  const [dataPoint, setDataPoint] = useState(null); 
 
   const [query1, setQuery1] = useState("C11");
   const [query2, setQuery2] = useState("C12");
@@ -93,6 +94,7 @@ export default function Home() {
           </div>
           <ScatterWrapper
             data={initialData}
+            setDataPoint={setDataPoint}
             query1={query1}
             query2={query2}
           />
