@@ -1,39 +1,7 @@
 import numpy as np
-import matplotlib
 import matplotlib.pyplot as plt
-
-def transform(itr, tmx):
-    '''
-    Transform 3D-tensor (Euclidean or Cartesion tensor) of any order (>0) to another coordinate system
-    Parameters:
-        itr: input tensor, before transformation; should be a 3-element vector, a 3x3 matrix, or a 3x3x3x... multidimensional array, each dimension containing 3 elements
-        tmx: transformation matrix, 3x3 matrix that contains the direction cosines between the old and the new coordinate system
-    Returns:
-        otr: output tensor, after transformation; has the same dimensions as the input tensor
-    '''
-    ne = np.asarray(itr).size
-    nd = np.asarray(itr).ndim
-
-    if (ne == 3):
-        nd = 1
-
-    otr = np.zeros_like(itr)
-
-    iie = np.zeros((nd, 1))
-    ioe = np.zeros((nd, 1))
-    cne = np.cumprod(3 * np.ones((nd, 1))) / 3
-
-    for oe in range(ne):
-        ioe = np.mod(np.floor(oe / cne).astype(int), 3)
-        for ie in range(ne):
-            pmx = 1
-            iie = np.mod(np.floor(ie / cne).astype(int), 3)
-            for i in range(nd):
-                pmx = pmx * tmx[ioe[i], iie[i]]
-            otr[np.unravel_index(oe, otr.shape)] = otr[np.unravel_index(oe, otr.shape)] + pmx * itr[
-                np.unravel_index(ie, itr.shape)]
-
-    return otr
+from transform import transform
+    
 
 def visual2D(c): 
     '''
@@ -81,6 +49,9 @@ def visual2D(c):
     
     # Plot figure
     fig, axs = plt.subplots(1, 2, subplot_kw={'projection': 'polar'})
+    print("a:")
+    print(a * 180 / np.pi)
+    print(E1)
     axs[0].plot(a, E1)
     axs[0].grid(True)
     axs[0].set_title("Young's Modulus")
@@ -157,7 +128,8 @@ def ToMatrix(C = None):
             a,b = change(i)
             c,d = change(j)
             CH[i,j] = C[a,b,c,d]
-        return CH
+    return CH
+
 
 if __name__ == '__main__':
     
@@ -165,5 +137,3 @@ if __name__ == '__main__':
     # c = np.array([2563908499, 1191999318, 2563908499, 0, 0, 650861882])
     c = np.array([604591262.41, 102330968.98, 1157840534.65, 0.00, 0.00, 156833419.95])
     visual2D(c)
-
-
