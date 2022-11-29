@@ -1,9 +1,9 @@
 import * as d3 from "d3";
 const MARGIN = {
-  TOP: 100,
+  TOP: 50,
   RIGHT: 50,
-  BOTTOM: 100,
-  LEFT: 100,
+  BOTTOM: 50,
+  LEFT: 50,
 };
 const SIDE = 300; 
 const WIDTH = SIDE - MARGIN.LEFT - MARGIN.RIGHT;
@@ -18,6 +18,13 @@ class Structure {
       .attr("height", HEIGHT + MARGIN.TOP + MARGIN.BOTTOM)
       .append("g")
       .attr("transform", `translate(${MARGIN.LEFT}, ${MARGIN.RIGHT})`);
+    
+    this.svg.append("text")
+      .attr("x", (WIDTH / 2))             
+      .attr("y", 0 - (MARGIN.TOP / 2))
+      .attr("text-anchor", "middle")  
+      .style("font-size", "16px") 
+      .text("Unit Cell Geometry");
     this.update(data);
   }
   update(data) {

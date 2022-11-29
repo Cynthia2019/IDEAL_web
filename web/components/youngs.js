@@ -1,3 +1,4 @@
+import { height } from '@mui/system';
 import React from 'react';
 import Plot from "react-plotly.js";
 
@@ -55,7 +56,9 @@ export default function youngs() {
             color: '#000'
         },
         showlegend: true,
-        orientation: -90
+        orientation: -90,
+        width: 400,
+        height: 400
     };
     return (
         <Plot

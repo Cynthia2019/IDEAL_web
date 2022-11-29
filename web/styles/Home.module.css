@@ -25,9 +25,17 @@
     font-size: 16px;
     font-weight: 200;
 }
+
+.subPlots {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 90vw;
+}
+
 .selectors {
     width: 30%; 
-    /* border: 1px solid green; */
     display: flex;
     flex-direction: column;
 }

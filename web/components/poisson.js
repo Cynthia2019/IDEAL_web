@@ -44,7 +44,9 @@ export default function poisson() {
             color: '#000'
         },
         showlegend: true,
-        orientation: -90
+        orientation: -90,
+        width: 400,
+        height: 400
     };
     return (
         <Plot

@@ -107,6 +107,8 @@ export default function Home() {
             query2={query2}
           />
           <div className={styles.subPlots}>
+            <Youngs />
+            <Poisson />
             <StructureWrapper data={dataPoint}/>
           </div>
         </div>
@@ -167,15 +169,6 @@ export default function Home() {
           <div className={styles["property-range"]}></div>
         </div>
       </div>
-
-      <div>
-        <div>
-          <Youngs/>
-        </div>
-        <div>
-          <Poisson/>
-        </div>
-          </div>
     </div>
   );
 }

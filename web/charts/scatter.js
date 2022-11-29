@@ -88,7 +88,7 @@ class Scatter {
         .style("stroke", "black")
         .style("stroke-width", 2)
         .style("fill-opacity", 1)
-      tooltip.style("opacity", 1)
+      // tooltip.style("opacity", 1)
       setDataPoint(i);
     };
 
@@ -98,7 +98,7 @@ class Scatter {
         .style("stroke", "none")
         .style("stroke-width", 0)
         .style("fill-opacity", 0.5)
-      tooltip.style("opacity", 0)
+      // tooltip.style("opacity", 0)
     };
 
     this.data = this.data.filter((d, i) => (i < 1000)); 
