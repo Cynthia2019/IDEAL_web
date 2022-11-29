@@ -55,6 +55,10 @@ export default function Home() {
 
   const Youngs = dynamic(() => import('../components/youngs'), {
     ssr: false
+});
+
+  const Poisson = dynamic(() => import('../components/poisson'), {
+    ssr: false
 })
 
   const handleDatasetChange = (e) => {
@@ -167,6 +171,9 @@ export default function Home() {
       <div>
         <div>
           <Youngs/>
+        </div>
+        <div>
+          <Poisson/>
         </div>
           </div>
     </div>
