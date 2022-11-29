@@ -67,7 +67,7 @@ export default function Home() {
 
   useEffect(() => {
     csv(
-      "https://gist.githubusercontent.com/Cynthia2019/94aadbe0146bcdcc737534d1a6fbb925/raw/bb96d3bc0daeefa1005dd1671b700a4fdd8c99e4/ideal_2d_data.csv"
+      "https://gist.githubusercontent.com/Cynthia2019/837a01c52c4c17d7b31dbd8ad3045878/raw/57fc554bfb9f5df3c92d3309147b4c6c0b1190ca/ideal_2d_data_small_sample.csv"
     ).then((data) => {
       const processedData = data.map((d) => ({
             C11: parseFloat(d.C11),
@@ -80,7 +80,9 @@ export default function Home() {
             symmetry: d.symmetry, 
             material_0: d.CM0,
             material_1: d.CM1,
-            geometry: d.geometry_full
+            geometry: d.geometry_full,
+            youngs: d.youngs, 
+            poisson: d.poisson
           }));
       setInitialData(processedData);
     });
@@ -107,8 +109,8 @@ export default function Home() {
             query2={query2}
           />
           <div className={styles.subPlots}>
-            <Youngs />
-            <Poisson />
+            <Youngs dataPoint={dataPoint}/>
+            <Poisson dataPoint={dataPoint}/>
             <StructureWrapper data={dataPoint}/>
           </div>
         </div>
