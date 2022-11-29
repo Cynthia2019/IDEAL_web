@@ -49,9 +49,11 @@ def visual2D(c):
     
     # Plot figure
     fig, axs = plt.subplots(1, 2, subplot_kw={'projection': 'polar'})
-    print("a:")
-    print(a * 180 / np.pi)
-    print(E1)
+    # print("Young's r and theta:")
+    # print(a * 180 / np.pi)
+    # print(E1)
+    print("Poisson r:")
+    print(P1)
     axs[0].plot(a, E1)
     axs[0].grid(True)
     axs[0].set_title("Young's Modulus")
