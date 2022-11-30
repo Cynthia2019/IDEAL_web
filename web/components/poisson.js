@@ -24,7 +24,7 @@ export default function poisson({dataPoint}) {
     var layout = {
         title: 'Poisson\'s Ratio',
         font: {
-            family: 'Arial, sans-serif;',
+            family: 'Arial, sans-serif',
             size: 12,
             color: '#000'
         },

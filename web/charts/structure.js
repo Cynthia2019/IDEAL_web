@@ -24,11 +24,12 @@ class Structure {
       .attr("y", 0 - (MARGIN.TOP / 2))
       .attr("text-anchor", "middle")  
       .style("font-size", "16px") 
+      .style("font-family", 'Arial, sans-serif')
       .text("Unit Cell Geometry");
     this.update(data);
   }
   update(data) {
-    this.data = data.geometry
+    this.data = data?.geometry
     let res = []
     res = this.pixelate(data.geometry);
     const yScale = d3.scaleLinear().domain([0, 50]).range([HEIGHT, 0]);

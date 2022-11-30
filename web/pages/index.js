@@ -85,8 +85,9 @@ export default function Home() {
             poisson: d.poisson
           }));
       setInitialData(processedData);
+      setDataPoint(processedData[0]);
     });
-  }, [initialData]);
+  }, []);
 
   return (
     <div>
@@ -104,6 +105,7 @@ export default function Home() {
           </div>
           <ScatterWrapper
             data={initialData}
+            dataPoint={dataPoint}
             setDataPoint={setDataPoint}
             query1={query1}
             query2={query2}
