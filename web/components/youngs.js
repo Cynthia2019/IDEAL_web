@@ -1,9 +1,7 @@
-import { height } from '@mui/system';
 import React from 'react';
 import Plot from "react-plotly.js";
 
 export default function youngs({dataPoint}) {
-    var regex = /[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)/g
     var trace1 = {
         theta: [  0.,    3.6,   7.2,  10.8,  14.4 , 18.,   21.6,  25.2,  28.8,  32.4,  36.,   39.6,
   43.2,  46.8,  50.4,  54.,   57.6,  61.2,  64.8,  68.4,  72.,   75.6,  79.2,  82.8,
@@ -15,7 +13,7 @@ export default function youngs({dataPoint}) {
  302.4, 306.,  309.6, 313.2, 316.8, 320.4, 324.,  327.6, 331.2, 334.8, 338.4, 342.,
  345.6, 349.2, 352.8, 356.4, 360. ]
         ,
-        r: dataPoint.youngs? dataPoint.youngs.match(regex).map(parseFloat) : undefined,
+        r: dataPoint.youngs, 
         mode: 'lines',
         name: "Young's Modulus",
         line: {color: 'peru'},
@@ -30,15 +28,18 @@ export default function youngs({dataPoint}) {
             size: 12,
             color: '#000'
         },
-        showlegend: true,
         orientation: -90,
         width: 400,
         height: 400
     };
+    var config = {
+        modeBarButtonsToRemove: ['zoom2d']
+    }
     return (
         <Plot
             data={data}
             layout={layout}
+            config={config}
         />
     );
 }

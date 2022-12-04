@@ -45,12 +45,14 @@ const BootstrapInput = styled(InputBase)(({ theme }) => ({
   },
 }));
 
+const regex = /[-+]?[0-9]*\.?[0-9]+([eE]?[-+]?[0-9]+)/g
+
 export default function Home() {
   const [initialData, setInitialData] = useState([]);
   const [dataPoint, setDataPoint] = useState({}); 
 
-  const [query1, setQuery1] = useState("C11");
-  const [query2, setQuery2] = useState("C12");
+  const [query1, setQuery1] = useState("Minimal directional Young's modulus [N/m]");
+  const [query2, setQuery2] = useState("Maximal directional Young's modulus [N/m]");
   const [dataset, setDataset] = useState("");
 
   const Youngs = dynamic(() => import('../components/youngs'), {
@@ -65,25 +67,42 @@ export default function Home() {
     setDataset(e.target.value);
   };
 
+  const handleQuery1Change = (e) => {
+    setQuery1(e.target.value)
+  }
+
+  const handleQuery2Change = (e) => {
+    setQuery2(e.target.value)
+  }
+
   useEffect(() => {
     csv(
       "https://gist.githubusercontent.com/Cynthia2019/837a01c52c4c17d7b31dbd8ad3045878/raw/57fc554bfb9f5df3c92d3309147b4c6c0b1190ca/ideal_2d_data_small_sample.csv"
     ).then((data) => {
-      const processedData = data.map((d) => ({
-            C11: parseFloat(d.C11),
-            C12: parseFloat(d.C12), 
-            C22: parseFloat(d.C22),
-            C16: parseFloat(d.C16),
-            C26: parseFloat(d.C26), 
-            C66: parseFloat(d.C66), 
-            condition: d.condition,
-            symmetry: d.symmetry, 
-            material_0: d.CM0,
-            material_1: d.CM1,
-            geometry: d.geometry_full,
-            youngs: d.youngs, 
-            poisson: d.poisson
-          }));
+      const processedData = data.map((d) => {
+        let youngs = d.youngs.match(regex).map(parseFloat)
+        let poisson = d.poisson.match(regex).map(parseFloat)
+        let processed = {
+          C11: parseFloat(d.C11),
+          C12: parseFloat(d.C12), 
+          C22: parseFloat(d.C22),
+          C16: parseFloat(d.C16),
+          C26: parseFloat(d.C26), 
+          C66: parseFloat(d.C66), 
+          condition: d.condition,
+          symmetry: d.symmetry, 
+          material_0: d.CM0,
+          material_1: d.CM1,
+          geometry: d.geometry_full,
+          youngs: youngs, 
+          poisson: poisson,
+          "Minimal directional Young's modulus [N/m]": Math.min(...youngs),
+          "Maximal directional Young's modulus [N/m]": Math.max(...youngs),
+          "Minimal Poisson's ratio [-]": Math.min(...poisson), 
+          "Maximal Poisson's ratio [-]": Math.max(...poisson)
+        }
+        return processed; 
+      });
       setInitialData(processedData);
       setDataPoint(processedData[0]);
     });
@@ -105,7 +124,6 @@ export default function Home() {
           </div>
           <ScatterWrapper
             data={initialData}
-            dataPoint={dataPoint}
             setDataPoint={setDataPoint}
             query1={query1}
             query2={query2}
@@ -142,30 +160,36 @@ export default function Home() {
             <div className={styles["data-content-line"]}>
               <p>x-axis data</p>
               <FormControl variant="standard" fullWidth>
-                <InputLabel id="x-axis-select-label">C11</InputLabel>
+                <InputLabel id="x-axis-select-label">{query1}</InputLabel>
                 <Select
                   labelId="x-axis-select-label"
                   id="x-axis-select"
-                  value="C11"
-                  onChange={setQuery1}
+                  value={query1}
+                  onChange={handleQuery1Change}
                   input={<BootstrapInput />}
                 >
-                  <MenuItem value={"C11"}>C11</MenuItem>
+                  <MenuItem value={"Minimal directional Young's modulus [N/m]"}>Minimal directional Young's modulus [N/m]</MenuItem>
+                  <MenuItem value={"Maximal directional Young's modulus [N/m]"}>Maximal directional Young's modulus [N/m]</MenuItem>
+                  <MenuItem value={"Minimal Poisson's ratio [-]"}>Minimal Poisson's ratio [-]</MenuItem>
+                  <MenuItem value={"Maximal Poisson's ratio [-]"}>Maximal Poisson's ratio [-]</MenuItem>
                 </Select>
               </FormControl>
             </div>
             <div className={styles["data-content-line"]}>
               <p>y-axis data</p>
               <FormControl variant="standard" fullWidth>
-                <InputLabel id="y-axis-select-label">C12</InputLabel>
+                <InputLabel id="y-axis-select-label">{query2}</InputLabel>
                 <Select
                   labelId="y-axis-select-label"
                   id="y-axis-select"
-                  value="C12"
-                  onChange={setQuery2}
+                  value={query2}
+                  onChange={handleQuery2Change}
                   input={<BootstrapInput />}
                 >
-                  <MenuItem value={"C12"}>C12</MenuItem>
+                  <MenuItem value={"Minimal directional Young's modulus [N/m]"}>Minimal directional Young's modulus [N/m]</MenuItem>
+                  <MenuItem value={"Maximal directional Young's modulus [N/m]"}>Maximal directional Young's modulus [N/m]</MenuItem>
+                  <MenuItem value={"Minimal Poisson's ratio [-]"}>Minimal Poisson's ratio [-]</MenuItem>
+                  <MenuItem value={"Maximal Poisson's ratio [-]"}>Maximal Poisson's ratio [-]</MenuItem>
                 </Select>
               </FormControl>
             </div>

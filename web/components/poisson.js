@@ -2,7 +2,6 @@ import React from 'react';
 import Plot from "react-plotly.js";
 
 export default function poisson({dataPoint}) {
-    var regex = /[+-]?\d+(\.\d+)?/g;
     var trace1 = {
         theta: [0., 3.6, 7.2, 10.8, 14.4, 18., 21.6, 25.2, 28.8, 32.4, 36., 39.6,
             43.2, 46.8, 50.4, 54., 57.6, 61.2, 64.8, 68.4, 72., 75.6, 79.2, 82.8,
@@ -13,7 +12,7 @@ export default function poisson({dataPoint}) {
             259.2, 262.8, 266.4, 270., 273.6, 277.2, 280.8, 284.4, 288., 291.6, 295.2, 298.8,
             302.4, 306., 309.6, 313.2, 316.8, 320.4, 324., 327.6, 331.2, 334.8, 338.4, 342.,
             345.6, 349.2, 352.8, 356.4, 360.],
-        r: dataPoint.poisson? dataPoint.poisson.match(regex).map(parseFloat) : undefined,
+        r: dataPoint.poisson,
         mode: 'lines',
         name: 'Poisson\'s Ratio',
         line: {color: 'peru'},
@@ -28,16 +27,18 @@ export default function poisson({dataPoint}) {
             size: 12,
             color: '#000'
         },
-        showlegend: true,
         orientation: -90,
         width: 400,
         height: 400
     };
-    console.log(trace1.theta.length, trace1.r?.length)
+    var config = {
+        modeBarButtonsToRemove: ['zoom2d']
+    }
     return (
         <Plot
             data={data}
             layout={layout}
+            config={config}
         />
     );
 }
