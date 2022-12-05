@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import Scatter from "../charts/Scatter";
 
-const ScatterWrapper = ({ data, element, setDataPoint, query1, query2 }) => {
+const ScatterWrapper = ({ data, setDataPoint, query1, query2 }) => {
   const chartArea = useRef(null);
   const [chart, setChart] = useState(null);
 

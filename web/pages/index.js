@@ -54,6 +54,7 @@ export default function Home() {
   const [query1, setQuery1] = useState("Minimal directional Young's modulus [N/m]");
   const [query2, setQuery2] = useState("Maximal directional Young's modulus [N/m]");
   const [dataset, setDataset] = useState("");
+  const datasets = ["https://gist.githubusercontent.com/Cynthia2019/837a01c52c4c17d7b31dbd8ad3045878/raw/57fc554bfb9f5df3c92d3309147b4c6c0b1190ca/ideal_2d_data_small_sample.csv"];
 
   const Youngs = dynamic(() => import('../components/youngs'), {
     ssr: false
@@ -104,6 +105,8 @@ export default function Home() {
         return processed; 
       });
       setInitialData(processedData);
+      console.log("processed data:")
+      console.log(processedData[0])
       setDataPoint(processedData[0]);
     });
   }, []);
