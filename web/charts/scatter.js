@@ -14,6 +14,8 @@ const MARGIN = {
 const WIDTH = SIZE - MARGIN.LEFT - MARGIN.RIGHT;
 const HEIGHT = SIZE - MARGIN.TOP - MARGIN.BOTTOM;
 
+const colors = ['#8A8BD0', '#FFB347', '#89CFF0']
+
 function expo(x, f) {
   if (x < 1000) return x;
   return Number(x).toExponential(f);
@@ -60,21 +62,29 @@ class Scatter {
     this.data = data;
     this.query1 = query1;
     this.query2 = query2;
-    const dataCopy = data;
+    let datasets = []
+    data.map((d, i) => {
+      for(const data of d.data) {
+        data.name = d.name
+        data.color = colors[i]
+      }
+      datasets.push(d.data)
+    })
+    const finalData = [].concat(...datasets);
     d3.select(element).select(".tooltip").remove();
     const yScale = d3
       .scaleLinear()
       .domain([
-        d3.min(this.data, (d) => d[query2]),
-        d3.max(this.data, (d) => d[query2]),
+        d3.min(finalData, (d) => d[query2]),
+        d3.max(finalData, (d) => d[query2]),
       ])
       .range([HEIGHT, 0]);
 
     const xScale = d3
       .scaleLinear()
       .domain([
-        d3.min(this.data, (d) => d[query1]),
-        d3.max(this.data, (d) => d[query1]),
+        d3.min(finalData, (d) => d[query1]),
+        d3.max(finalData, (d) => d[query1]),
       ])
       .range([0, WIDTH]);
 
@@ -125,7 +135,9 @@ class Scatter {
     const mousemove = function (e, d) {
       tooltip
         .html(
-          "symmetry: " +
+          "Dataset: " + 
+          d['name'] +
+           "<br>symmetry: " +
             d["symmetry"] +
             "<br>Material_0: " +
             d.material_0 +
@@ -172,7 +184,7 @@ class Scatter {
         xAxisGroup.call(xAxisCall);
         yAxisGroup.call(yAxisCall);
 
-        d3.selectAll("circle").data(dataCopy)
+        d3.selectAll("circle").data(finalData)
           .attr("cy", (d) => newYScale(d[query2]))
           .attr("cx", (d) => newXScale(d[query1]));
       });
@@ -189,13 +201,13 @@ class Scatter {
       .append("g")
       .attr("clip-path", "url(#clip)")
       .selectAll("circle")
-      .data(this.data);
+      .data(finalData);
     circles
       .enter()
       .append("circle")
       .join(circles)
       .attr("r", circleOriginalSize)
-      .attr("fill", "#8A8BD0")
+      .attr("fill", (d) => d.color)
       .style("stroke", "none")
       .style("stroke-width", 2)
       .style("fill-opacity", 0.8)
