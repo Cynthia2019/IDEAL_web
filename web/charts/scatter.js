@@ -3,14 +3,21 @@ import * as d3 from "d3";
 const circleOriginalSize = 5;
 const circleFocusSize = 7;
 
+const SIZE = 600;
+
 const MARGIN = {
-  TOP: 100,
-  RIGHT: 50,
-  BOTTOM: 100,
+  TOP: 50,
+  RIGHT: 20,
+  BOTTOM: 50,
   LEFT: 100,
 };
-const WIDTH = 900 - MARGIN.LEFT - MARGIN.RIGHT;
-const HEIGHT = 900 - MARGIN.TOP - MARGIN.BOTTOM;
+const WIDTH = SIZE - MARGIN.LEFT - MARGIN.RIGHT;
+const HEIGHT = SIZE - MARGIN.TOP - MARGIN.BOTTOM;
+
+function expo(x, f) {
+  if(x < 1000) return x
+  return Number(x).toExponential(f);
+}
 
 class Scatter {
   constructor(element, data, setDataPoint) {
@@ -69,10 +76,10 @@ class Scatter {
       ])
       .range([0, WIDTH]);
 
-    const xAxisCall = d3.axisBottom(xScale);
+    const xAxisCall = d3.axisBottom(xScale).tickFormat(x => `${expo(x, 2)}`);
     this.xAxisGroup.transition().duration(500).call(xAxisCall);
 
-    const yAxisCall = d3.axisLeft(yScale);
+    const yAxisCall = d3.axisLeft(yScale).tickFormat(y => `${expo(y, 2)}`);
     this.yAxisGroup.transition().duration(500).call(yAxisCall);
     this.xLabel.text(this.query1);
     this.yLabel.text(this.query2);
@@ -95,13 +102,12 @@ class Scatter {
         .style("fill-opacity", 1);
       setDataPoint(d);
       tooltip.style("visibility", "visible").transition().duration(200);
-      console.log(d.poisson, d.poisson.length)
       
     };
 
     const mousemove = function (e, d) {
       tooltip
-        .html("C11: " + d["C11"] + "<br>" + "C12: " + d["C12"] + "<br>")
+        .html("symmetry: " + d["symmetry"] + "<br>Material_0: " + d.material_0 + "<br>Material_1: " + d.material_1 + `<br>${query1}: ` + d[query1] + `<br>${query2}: ` + d[query2])
         .style("top", e.pageY + 10 + "px")
         .style("left", e.pageX + 10 + "px");
     };

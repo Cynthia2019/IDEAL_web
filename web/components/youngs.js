@@ -29,17 +29,21 @@ export default function youngs({dataPoint}) {
             color: '#000'
         },
         orientation: -90,
-        width: 400,
-        height: 400
+        width: 330,
+        height: 330,
     };
     var config = {
         modeBarButtonsToRemove: ['zoom2d']
+    }
+    var style = {
+        marginBottom: '-60px'
     }
     return (
         <Plot
             data={data}
             layout={layout}
             config={config}
+            style={style}
         />
     );
 }

@@ -1,3 +1,4 @@
+import zIndex from "@mui/material/styles/zIndex";
 import React, { useRef, useState, useEffect } from "react";
 import Structure from "../charts/Structure";
 
@@ -13,7 +14,7 @@ const StructureWrapper = ({ data }) => {
     }
   }, [chart, data]);
 
-  return <div id="structure-plot" ref={chartArea}></div>
+  return <div id="structure-plot" ref={chartArea} style={{zIndex:10}}></div>
 };
 
 export default StructureWrapper;
