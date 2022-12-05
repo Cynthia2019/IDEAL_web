@@ -109,18 +109,14 @@ export default function Home() {
                 });
                 //setInitialData(processedData);
                 console.log("processed data:")
-                console.log(processedData[0])
+                console.log(processedData)
                 //setDataPoint(processedData[0]);
                 // console.log("num data")
                 // console.log(initialData.length)
-                setInitialData(data =>
-                    [...data, processedData]
-                )
-                console.log("post processed data")
+                setInitialData([...initialData, processedData])
+                //console.log("post processed data")
                 console.log(initialData)
-                setDataPoint(dp =>
-                    [...dp, processedData[0]]
-                )
+                setDataPoint([...dataPoint, processedData[0]])
             })
         }
         ;
