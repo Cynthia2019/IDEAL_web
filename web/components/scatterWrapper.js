@@ -11,8 +11,9 @@ const ScatterWrapper = ({ data, setDataPoint, query1, query2 }) => {
     } 
     else {
       for (let i = 0; i < data.length; i++) {
-        //console.log("data :" + i)
-        //console.log(data[0])
+        console.log("data :" + i)
+        console.log(data)
+        console.log(setDataPoint)
       }
       chart.update(data, chartArea.current, setDataPoint, query1, query2);
     }

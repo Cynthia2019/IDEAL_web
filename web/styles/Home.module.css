@@ -61,15 +61,6 @@
     margin: 0 10px;
     padding: 20px;
 }
-.range-content-line {
-    display: flex;
-    flex-direction: column;
-}
-.range-selection-line {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
 .range-title {
     font-size: 20px;
     font-weight: bold;
