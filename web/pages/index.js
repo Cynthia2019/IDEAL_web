@@ -128,12 +128,12 @@ export default function Home() {
             query1={query1}
             query2={query2}
           />
-          <div className={styles.subPlots}>
+        </div>
+        <div className={styles.subPlots}>
             <Youngs dataPoint={dataPoint}/>
             <Poisson dataPoint={dataPoint}/>
             <StructureWrapper data={dataPoint}/>
           </div>
-        </div>
         <div className={styles.selectors}>
           <div className={styles["data-selector"]}>
             <div className={styles["data-content-line"]}>

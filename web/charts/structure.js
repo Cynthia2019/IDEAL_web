@@ -1,11 +1,11 @@
 import * as d3 from "d3";
 const MARGIN = {
-  TOP: 50,
-  RIGHT: 50,
-  BOTTOM: 50,
-  LEFT: 50,
+  TOP: 30,
+  RIGHT: 30,
+  BOTTOM: 30,
+  LEFT: 30,
 };
-const SIDE = 300; 
+const SIDE = 230; 
 const WIDTH = SIDE - MARGIN.LEFT - MARGIN.RIGHT;
 const HEIGHT = SIDE - MARGIN.TOP - MARGIN.BOTTOM;
 
@@ -16,6 +16,7 @@ class Structure {
       .append("svg")
       .attr("width", WIDTH + MARGIN.LEFT + MARGIN.RIGHT)
       .attr("height", HEIGHT + MARGIN.TOP + MARGIN.BOTTOM)
+      .style("z-index", 10)
       .append("g")
       .attr("transform", `translate(${MARGIN.LEFT}, ${MARGIN.RIGHT})`);
     

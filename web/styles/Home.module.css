@@ -1,15 +1,13 @@
 .body {
-    padding: 30px 30px;
+    padding: 0px 30px;
     display: flex;
     width: 100%;
-    /* border: 1px solid red; */
     min-height: 100vh;
     max-width: 100vw;
 }
 
 .mainPlot {
-    width: 70%;
-    /* border: 1px solid blue;  */
+    width: 50%;
 }
 
 .mainPlotHeader {
@@ -22,20 +20,21 @@
     margin: 0
 }
 .mainPlotSub {
-    font-size: 16px;
+    margin-bottom: 0px;
+    font-size: 14px;
     font-weight: 200;
 }
 
 .subPlots {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    width: 90vw;
+    width: 25%;
 }
 
 .selectors {
-    width: 30%; 
+    width: 25%; 
     display: flex;
     flex-direction: column;
 }
