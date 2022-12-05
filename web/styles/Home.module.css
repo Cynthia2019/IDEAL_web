@@ -5,11 +5,9 @@
     min-height: 100vh;
     max-width: 100vw;
 }
-
 .mainPlot {
     width: 50%;
 }
-
 .mainPlotHeader {
     display: flex;
     flex-direction: column;
@@ -24,7 +22,6 @@
     font-size: 14px;
     font-weight: 200;
 }
-
 .subPlots {
     display: flex;
     flex-direction: column;
@@ -32,20 +29,17 @@
     align-items: center;
     width: 25%;
 }
-
 .selectors {
-    width: 25%; 
+    width: 25%;
     display: flex;
     flex-direction: column;
 }
-
 .data-selector {
     width: 90%;
     border: 3px solid #E4E0EE;
     margin: 10px 10px;
     padding: 20px;
 }
-
 .data-content-line {
     display: flex;
     flex-direction: column;
@@ -60,6 +54,15 @@
     border: 3px solid #E4E0EE;
     margin: 0 10px;
     padding: 20px;
+}
+.range-content-line {
+    display: flex;
+    flex-direction: column;
+}
+.range-selection-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 .range-title {
     font-size: 20px;
