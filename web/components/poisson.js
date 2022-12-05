@@ -35,7 +35,7 @@ export default function poisson({dataPoint}) {
         modeBarButtonsToRemove: ['zoom2d']
     }    
     var style = {
-        marginBottom: '-30px'
+        marginTop: '-50px'
     }
     return (
         <Plot

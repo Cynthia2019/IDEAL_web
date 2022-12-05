@@ -17,6 +17,7 @@ class Structure {
       .attr("width", WIDTH + MARGIN.LEFT + MARGIN.RIGHT)
       .attr("height", HEIGHT + MARGIN.TOP + MARGIN.BOTTOM)
       .style("z-index", 10)
+      .style("margin-top", "30px")
       .append("g")
       .attr("transform", `translate(${MARGIN.LEFT}, ${MARGIN.RIGHT})`);
     
