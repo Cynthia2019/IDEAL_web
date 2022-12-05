@@ -36,7 +36,7 @@ export default function youngs({dataPoint}) {
         modeBarButtonsToRemove: ['zoom2d']
     }
     var style = {
-        marginBottom: '-60px'
+        marginTop: '-50px'
     }
     return (
         <Plot

@@ -53,10 +53,16 @@
 .data-title {
     font-size: 20px;
     font-weight: bold;
+    margin: 5px 0; 
 }
 .property-range {
     width: 90%;
     border: 3px solid #E4E0EE;
     margin: 0 10px;
     padding: 20px;
+}
+.range-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 5px 0;
 }

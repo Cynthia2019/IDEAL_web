@@ -130,9 +130,9 @@ export default function Home() {
           />
         </div>
         <div className={styles.subPlots}>
+            <StructureWrapper data={dataPoint}/>
             <Youngs dataPoint={dataPoint}/>
             <Poisson dataPoint={dataPoint}/>
-            <StructureWrapper data={dataPoint}/>
           </div>
         <div className={styles.selectors}>
           <div className={styles["data-selector"]}>
@@ -194,7 +194,10 @@ export default function Home() {
               </FormControl>
             </div>
           </div>
-          <div className={styles["property-range"]}></div>
+          <div className={styles["property-range"]}>
+            <p className={styles["range-title"]}>Property Range</p>
+            
+          </div>
         </div>
       </div>
     </div>
