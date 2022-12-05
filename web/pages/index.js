@@ -78,7 +78,7 @@ export default function Home() {
 
   useEffect(() => {
     csv(
-      "https://gist.githubusercontent.com/Cynthia2019/837a01c52c4c17d7b31dbd8ad3045878/raw/57fc554bfb9f5df3c92d3309147b4c6c0b1190ca/ideal_2d_data_small_sample.csv"
+      "https://gist.githubusercontent.com/GeorgeBian/5b65c9227408b2ba00e4db9bc3b4d25b/raw/ae6ca7123c1c0c0621595c3dd8d4bd983f99fefc/ideal_2d_data_small_sample2.csv"
     ).then((data) => {
       const processedData = data.map((d) => {
         let youngs = d.youngs.match(regex).map(parseFloat)
