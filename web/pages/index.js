@@ -8,10 +8,11 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import NativeSelect from "@mui/material/NativeSelect";
 import Select from "@mui/material/Select";
+import TextField from "@mui/material/TextField";
 import { styled } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import { csv } from "d3";
-import dynamic from 'next/dynamic'
+import dynamic from "next/dynamic";
 
 const BootstrapInput = styled(InputBase)(({ theme }) => ({
   "label + &": {
@@ -45,63 +46,67 @@ const BootstrapInput = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const regex = /[-+]?[0-9]*\.?[0-9]+([eE]?[-+]?[0-9]+)/g
+const regex = /[-+]?[0-9]*\.?[0-9]+([eE]?[-+]?[0-9]+)/g;
 
 export default function Home() {
   const [initialData, setInitialData] = useState([]);
-  const [dataPoint, setDataPoint] = useState({}); 
+  const [dataPoint, setDataPoint] = useState({});
 
-  const [query1, setQuery1] = useState("Minimal directional Young's modulus [N/m]");
-  const [query2, setQuery2] = useState("Maximal directional Young's modulus [N/m]");
+  const [query1, setQuery1] = useState(
+    "Minimal directional Young's modulus [N/m]"
+  );
+  const [query2, setQuery2] = useState(
+    "Maximal directional Young's modulus [N/m]"
+  );
   const [dataset, setDataset] = useState("");
 
-  const Youngs = dynamic(() => import('../components/youngs'), {
-    ssr: false
-});
+  const Youngs = dynamic(() => import("../components/youngs"), {
+    ssr: false,
+  });
 
-  const Poisson = dynamic(() => import('../components/poisson'), {
-    ssr: false
-})
+  const Poisson = dynamic(() => import("../components/poisson"), {
+    ssr: false,
+  });
 
   const handleDatasetChange = (e) => {
     setDataset(e.target.value);
   };
 
   const handleQuery1Change = (e) => {
-    setQuery1(e.target.value)
-  }
+    setQuery1(e.target.value);
+  };
 
   const handleQuery2Change = (e) => {
-    setQuery2(e.target.value)
-  }
+    setQuery2(e.target.value);
+  };
 
   useEffect(() => {
     csv(
       "https://gist.githubusercontent.com/Cynthia2019/837a01c52c4c17d7b31dbd8ad3045878/raw/57fc554bfb9f5df3c92d3309147b4c6c0b1190ca/ideal_2d_data_small_sample.csv"
     ).then((data) => {
       const processedData = data.map((d) => {
-        let youngs = d.youngs.match(regex).map(parseFloat)
-        let poisson = d.poisson.match(regex).map(parseFloat)
+        let youngs = d.youngs.match(regex).map(parseFloat);
+        let poisson = d.poisson.match(regex).map(parseFloat);
         let processed = {
           C11: parseFloat(d.C11),
-          C12: parseFloat(d.C12), 
+          C12: parseFloat(d.C12),
           C22: parseFloat(d.C22),
           C16: parseFloat(d.C16),
-          C26: parseFloat(d.C26), 
-          C66: parseFloat(d.C66), 
+          C26: parseFloat(d.C26),
+          C66: parseFloat(d.C66),
           condition: d.condition,
-          symmetry: d.symmetry, 
+          symmetry: d.symmetry,
           material_0: d.CM0,
           material_1: d.CM1,
           geometry: d.geometry_full,
-          youngs: youngs, 
+          youngs: youngs,
           poisson: poisson,
           "Minimal directional Young's modulus [N/m]": Math.min(...youngs),
           "Maximal directional Young's modulus [N/m]": Math.max(...youngs),
-          "Minimal Poisson's ratio [-]": Math.min(...poisson), 
-          "Maximal Poisson's ratio [-]": Math.max(...poisson)
-        }
-        return processed; 
+          "Minimal Poisson's ratio [-]": Math.min(...poisson),
+          "Maximal Poisson's ratio [-]": Math.max(...poisson),
+        };
+        return processed;
       });
       setInitialData(processedData);
       setDataPoint(processedData[0]);
@@ -130,10 +135,10 @@ export default function Home() {
           />
         </div>
         <div className={styles.subPlots}>
-            <StructureWrapper data={dataPoint}/>
-            <Youngs dataPoint={dataPoint}/>
-            <Poisson dataPoint={dataPoint}/>
-          </div>
+          <StructureWrapper data={dataPoint} />
+          <Youngs dataPoint={dataPoint} />
+          <Poisson dataPoint={dataPoint} />
+        </div>
         <div className={styles.selectors}>
           <div className={styles["data-selector"]}>
             <div className={styles["data-content-line"]}>
@@ -168,10 +173,18 @@ export default function Home() {
                   onChange={handleQuery1Change}
                   input={<BootstrapInput />}
                 >
-                  <MenuItem value={"Minimal directional Young's modulus [N/m]"}>Minimal directional Young's modulus [N/m]</MenuItem>
-                  <MenuItem value={"Maximal directional Young's modulus [N/m]"}>Maximal directional Young's modulus [N/m]</MenuItem>
-                  <MenuItem value={"Minimal Poisson's ratio [-]"}>Minimal Poisson's ratio [-]</MenuItem>
-                  <MenuItem value={"Maximal Poisson's ratio [-]"}>Maximal Poisson's ratio [-]</MenuItem>
+                  <MenuItem value={"Minimal directional Young's modulus [N/m]"}>
+                    Minimal directional Young's modulus [N/m]
+                  </MenuItem>
+                  <MenuItem value={"Maximal directional Young's modulus [N/m]"}>
+                    Maximal directional Young's modulus [N/m]
+                  </MenuItem>
+                  <MenuItem value={"Minimal Poisson's ratio [-]"}>
+                    Minimal Poisson's ratio [-]
+                  </MenuItem>
+                  <MenuItem value={"Maximal Poisson's ratio [-]"}>
+                    Maximal Poisson's ratio [-]
+                  </MenuItem>
                 </Select>
               </FormControl>
             </div>
@@ -186,17 +199,62 @@ export default function Home() {
                   onChange={handleQuery2Change}
                   input={<BootstrapInput />}
                 >
-                  <MenuItem value={"Minimal directional Young's modulus [N/m]"}>Minimal directional Young's modulus [N/m]</MenuItem>
-                  <MenuItem value={"Maximal directional Young's modulus [N/m]"}>Maximal directional Young's modulus [N/m]</MenuItem>
-                  <MenuItem value={"Minimal Poisson's ratio [-]"}>Minimal Poisson's ratio [-]</MenuItem>
-                  <MenuItem value={"Maximal Poisson's ratio [-]"}>Maximal Poisson's ratio [-]</MenuItem>
+                  <MenuItem value={"Minimal directional Young's modulus [N/m]"}>
+                    Minimal directional Young's modulus [N/m]
+                  </MenuItem>
+                  <MenuItem value={"Maximal directional Young's modulus [N/m]"}>
+                    Maximal directional Young's modulus [N/m]
+                  </MenuItem>
+                  <MenuItem value={"Minimal Poisson's ratio [-]"}>
+                    Minimal Poisson's ratio [-]
+                  </MenuItem>
+                  <MenuItem value={"Maximal Poisson's ratio [-]"}>
+                    Maximal Poisson's ratio [-]
+                  </MenuItem>
                 </Select>
               </FormControl>
             </div>
           </div>
           <div className={styles["property-range"]}>
             <p className={styles["range-title"]}>Property Range</p>
-            
+            <div className={styles["range-content-line"]}>
+              <p>x-axis: {query1}</p>
+              <div className={styles["range-selection-line"]}>
+                <TextField
+                  id="range-selector-1"
+                  label="Min"
+                  type="number"
+                  variant="standard"
+                  sx={{width: "40%"}}
+                />
+                <TextField
+                  id="range-selector-2"
+                  label="Max"
+                  type="number"
+                  variant="standard"
+                  sx={{width: "40%"}}
+                />
+              </div>
+            </div>
+            <div className={styles["range-content-line"]}>
+              <p>y-axis: {query2}</p>
+              <div className={styles["range-selection-line"]}>
+                <TextField
+                  id="range-selector-3"
+                  label="Min"
+                  type="number"
+                  variant="standard"
+                  sx={{width: "40%"}}
+                />
+                <TextField
+                  id="range-selector-4"
+                  label="Max"
+                  type="number"
+                  variant="standard"
+                  sx={{width: "40%"}}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
