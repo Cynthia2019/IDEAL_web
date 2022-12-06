@@ -60,7 +60,6 @@ export default function Home() {
     "Maximal directional Young's modulus [N/m]"
   );
   const [dataset, setDataset] = useState("");
-  const [currDataset, setCurrDataset] = useState(0);
 
   const Youngs = dynamic(() => import("../components/youngs"), {
     ssr: false,
@@ -114,8 +113,6 @@ export default function Home() {
           };
           return processed;
         });
-        // setInitialData(processedData);
-       // setInitialData([...initialData, processedData]);
        setDatasets(datasets => [...datasets, {
         name: i,
         data: processedData

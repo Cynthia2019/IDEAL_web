@@ -64,7 +64,7 @@ class Scatter {
     this.query2 = query2;
     let datasets = []
     data.map((d, i) => {
-      for(const data of d.data) {
+      for (const data of d.data) {
         data.name = d.name
         data.color = colors[i]
       }
