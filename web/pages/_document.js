@@ -47,9 +47,9 @@ const cache = createEmotionCache();
 	ctx.renderPage = () =>
 		originalRenderPage({
 			enhanceApp: (App) =>
-				function EnhanceApp(props) {
+				(function EnhanceApp(props) {
 					return <App emotionCache={cache} {...props} />;
-				},
+				}),
 		});
 
 	const initialProps = await Document.getInitialProps(ctx);
