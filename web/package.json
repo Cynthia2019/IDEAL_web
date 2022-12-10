@@ -21,6 +21,7 @@
     "plotly.js": "^2.16.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-plotly.js": "^2.6.0"
+    "react-plotly.js": "^2.6.0",
+    "react-router-dom": "^6.4.5"
   }
 }
