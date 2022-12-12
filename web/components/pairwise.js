@@ -5,11 +5,13 @@ import * as d3 from 'd3';
 export default function pairwise() {
     const [data, setData] = useState([]);
     const [layout, setLayout] = useState([]);
+     const [config, setConfig] = useState([]);
     useEffect(() => {
         d3.csv('https://gist.githubusercontent.com/GeorgeBian/2446dbbe5cc245fb39f1bff276f67c5c/raw/81be4e3c171b399bdcf794a9860061099a289253/lattice_2d.csv').then((rows) => {
 
             const labels = ['C11', 'C12', 'C22', 'C16', 'C26', 'C66'];
             console.log(rows)
+
             function unpack(rows, key) {
                 console.log(rows)
                 return rows.map(row => row[key.replace('.', ' ')]);
@@ -53,7 +55,7 @@ export default function pairwise() {
                 ],
                 text: (labels) => labels.map(x => x),
                 marker: {
-                    color: colors,
+                    color: "#8A8BD0",
                     colorscale: pl_colorscale,
                     size: 7,
                     line: {
@@ -65,21 +67,31 @@ export default function pairwise() {
 
             var layout = {
                 title: 'Lattice Data set',
-                height: 800,
-                width: 800,
+                height: 900,
+                width: 900,
                 autosize: false,
                 hovermode: 'closest',
                 dragmode: 'select',
                 plot_bgcolor: 'rgba(240,240,240, 0.95)',
                 xaxis: axis(),
-                yaxis: axis(),
                 xaxis2: axis(),
                 xaxis3: axis(),
                 xaxis4: axis(),
+                xaxis5: axis(),
+                xaxis6: axis(),
+                yaxis: axis(),
                 yaxis2: axis(),
                 yaxis3: axis(),
-                yaxis4: axis()
+                yaxis4: axis(),
+                yaxis5: axis(),
+                yaxis6: axis()
             }
+
+            var config={
+                scrollZoom: true,
+                responsive: true
+            }
+            setConfig(config);
             setData(data);
             setLayout(layout);
         });
@@ -88,6 +100,7 @@ export default function pairwise() {
         <Plot
             data={data}
             layout={layout}
+            config={config}
         />
     );
 }

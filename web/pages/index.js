@@ -6,13 +6,31 @@ export default function Home() {
     const Pairwise = dynamic(() => import("../components/pairwise"), {
         ssr: false,
     });
+
+    const handleClick = event => {
+    console.log(event.detail);
+    switch (event.detail) {
+      case 1: {
+        console.log('single click');
+        break;
+      }
+      case 2: {
+        console.log('double click');
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+  };
     return (
         <div>
             <div>
                 <Pairwise/>
-            </div>
-            <div>
-                <Link href="/scatter">Scatter Plot</Link>
+                <Link href="/scatter">
+                <button onClick={handleClick}>Scatter</button>
+                </Link>
+
             </div>
         </div>
     );
