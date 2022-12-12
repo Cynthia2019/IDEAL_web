@@ -67,8 +67,8 @@ export default function pairwise() {
 
             var layout = {
                 title: 'Lattice Data set',
-                height: 900,
-                width: 900,
+                height: 850,
+                width: 850,
                 autosize: false,
                 hovermode: 'closest',
                 dragmode: 'select',
