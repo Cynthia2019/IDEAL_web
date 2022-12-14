@@ -3,17 +3,13 @@ import Header from "../components/header";
 import styles from "../styles/Home.module.css";
 import ScatterWrapper from "../components/scatterWrapper";
 import StructureWrapper from "../components/structureWrapper";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import NativeSelect from "@mui/material/NativeSelect";
-import Select from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
 import { styled } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import { csv } from "d3";
 import dynamic from "next/dynamic";
-import Link from 'next/link';
+import DataSelector from "../components/dataSelector";
+import RangeSelector from "../components/rangeSelector";
 
 const BootstrapInput = styled(InputBase)(({ theme }) => ({
   "label + &": {
@@ -50,15 +46,15 @@ const BootstrapInput = styled(InputBase)(({ theme }) => ({
 const regex = /[-+]?[0-9]*\.?[0-9]+([eE]?[-+]?[0-9]+)/g;
 
 export default function Scatter() {
-//   const [initialData, setInitialData] = useState([]);
+  //   const [initialData, setInitialData] = useState([]);
   const [datasets, setDatasets] = useState([]);
   const [dataPoint, setDataPoint] = useState({});
 
   const [query1, setQuery1] = useState(
-    "Minimal directional Young's modulus [N/m]"
+    "C11"
   );
   const [query2, setQuery2] = useState(
-    "Maximal directional Young's modulus [N/m]"
+    "C12"
   );
   const [dataset, setDataset] = useState("");
 
@@ -87,6 +83,7 @@ export default function Scatter() {
     "https://gist.githubusercontent.com/Cynthia2019/837a01c52c4c17d7b31dbd8ad3045878/raw/57fc554bfb9f5df3c92d3309147b4c6c0b1190ca/ideal_2d_data_small_sample.csv",
   ];
 
+
   useEffect(() => {
     datasetsSrc.map((d, i) => {
       csv(d).then((data) => {
@@ -114,10 +111,13 @@ export default function Scatter() {
           };
           return processed;
         });
-       setDatasets(datasets => [...datasets, {
-        name: i,
-        data: processedData
-       }])
+        setDatasets((datasets) => [
+          ...datasets,
+          {
+            name: i,
+            data: processedData,
+          },
+        ]);
         setDataPoint(processedData[0]);
       });
     });
@@ -150,82 +150,16 @@ export default function Scatter() {
           <Poisson dataPoint={dataPoint} />
         </div>
         <div className={styles.selectors}>
-          <div className={styles["data-selector"]}>
-            <div className={styles["data-content-line"]}>
-              <p className={styles["data-title"]}>Data</p>
-              <FormControl>
-                <InputLabel htmlFor="dataset-select-label" variant="standard">
-                  Northwestern Free-Form Metamaterial Dataset
-                </InputLabel>
-                <NativeSelect
-                  inputProps={{
-                    name: "dataset",
-                    id: "dataset-select-label",
-                  }}
-                  value={dataset}
-                  label="Dataset"
-                  onChange={handleDatasetChange}
-                >
-                  <option value={"Northwestern Free-Form Metamaterial Dataset"}>
-                    Northwestern Free-Form Metamaterial Dataset
-                  </option>
-                </NativeSelect>
-              </FormControl>
-            </div>
-            <div className={styles["data-content-line"]}>
-              <p>x-axis data</p>
-              <FormControl variant="standard" fullWidth>
-                <InputLabel id="x-axis-select-label">{query1}</InputLabel>
-                <Select
-                  labelId="x-axis-select-label"
-                  id="x-axis-select"
-                  value={query1}
-                  onChange={handleQuery1Change}
-                  input={<BootstrapInput />}
-                >
-                  <MenuItem value={"Minimal directional Young's modulus [N/m]"}>
-                    Minimal directional Young's modulus [N/m]
-                  </MenuItem>
-                  <MenuItem value={"Maximal directional Young's modulus [N/m]"}>
-                    Maximal directional Young's modulus [N/m]
-                  </MenuItem>
-                  <MenuItem value={"Minimal Poisson's ratio [-]"}>
-                    Minimal Poisson's ratio [-]
-                  </MenuItem>
-                  <MenuItem value={"Maximal Poisson's ratio [-]"}>
-                    Maximal Poisson's ratio [-]
-                  </MenuItem>
-                </Select>
-              </FormControl>
-            </div>
-            <div className={styles["data-content-line"]}>
-              <p>y-axis data</p>
-              <FormControl variant="standard" fullWidth>
-                <InputLabel id="y-axis-select-label">{query2}</InputLabel>
-                <Select
-                  labelId="y-axis-select-label"
-                  id="y-axis-select"
-                  value={query2}
-                  onChange={handleQuery2Change}
-                  input={<BootstrapInput />}
-                >
-                  <MenuItem value={"Minimal directional Young's modulus [N/m]"}>
-                    Minimal directional Young's modulus [N/m]
-                  </MenuItem>
-                  <MenuItem value={"Maximal directional Young's modulus [N/m]"}>
-                    Maximal directional Young's modulus [N/m]
-                  </MenuItem>
-                  <MenuItem value={"Minimal Poisson's ratio [-]"}>
-                    Minimal Poisson's ratio [-]
-                  </MenuItem>
-                  <MenuItem value={"Maximal Poisson's ratio [-]"}>
-                    Maximal Poisson's ratio [-]
-                  </MenuItem>
-                </Select>
-              </FormControl>
-            </div>
-          </div>
-          <div className={styles["property-range"]}>
+          <DataSelector
+            dataset={dataset}
+            handleDatasetChange={handleDatasetChange}
+            query1={query1}
+            handleQuery1Change={handleQuery1Change}
+            query2={query2}
+            handleQuery2Change={handleQuery2Change}
+          />
+          <RangeSelector datasets={datasets}/>
+          {/* <div className={styles["property-range"]}>
             <p className={styles["range-title"]}>Property Range</p>
             <div className={styles["range-content-line"]}>
               <p>x-axis: {query1}</p>
@@ -265,7 +199,7 @@ export default function Scatter() {
                 />
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

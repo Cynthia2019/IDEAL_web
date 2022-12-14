@@ -10,7 +10,6 @@ const ScatterWrapper = ({ data, element, setDataPoint, query1, query2 }) => {
       setChart(new Scatter(chartArea.current, data, setDataPoint));
     } 
     else {
-        console.log(query1)
         chart.update(data, chartArea.current, setDataPoint, query1, query2);
 
     }
