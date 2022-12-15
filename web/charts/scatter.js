@@ -22,7 +22,7 @@ function expo(x, f) {
 }
 
 class Scatter {
-  constructor(element, data, setDataPoint) {
+  constructor(element, data, setDataPoint, query1Range, query2Range) {
     this.svg = d3
       .select(element)
       .append("svg")
@@ -76,7 +76,7 @@ class Scatter {
     let yScale = d3
       .scaleLinear()
       .domain([
-        d3.min(finalData, (d) => d[query2]),
+        d3.min(finalData, (d) => d[query2]), 
         d3.max(finalData, (d) => d[query2]),
       ])
       .range([HEIGHT, 0]);
@@ -215,8 +215,6 @@ class Scatter {
       .on("mouseover", mouseover)
       .on("mousemove", mousemove)
       .on("mouseleave", mouseleave)
-      .transition()
-      .duration(500)
       .attr("cx", (d) => xScale(d[query1]))
       .attr("cy", (d) => yScale(d[query2]));
 

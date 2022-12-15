@@ -1,76 +1,54 @@
-import { useState } from "react";
-import Slider, { SliderThumb } from "@mui/material/Slider";
-import { styled } from "@mui/material/styles";
-import PropTypes from "prop-types";
+import { useEffect, useState } from "react";
+import { Slider } from "antd";
 import styles from "../styles/rangeSelector.module.css";
 
-const AirbnbSlider = styled(Slider)(({ theme }) => ({
-  color: "#3a8589",
-  height: 3,
-  padding: "13px 0",
-  "& .MuiSlider-thumb": {
-    height: 27,
-    width: 27,
-    backgroundColor: "#fff",
-    border: "1px solid currentColor",
-    "&:hover": {
-      boxShadow: "0 0 0 8px rgba(58, 133, 137, 0.16)",
-    },
-    "& .airbnb-bar": {
-      height: 9,
-      width: 1,
-      backgroundColor: "currentColor",
-      marginLeft: 1,
-      marginRight: 1,
-    },
-  },
-  "& .MuiSlider-track": {
-    height: 3,
-  },
-  "& .MuiSlider-rail": {
-    color: theme.palette.mode === "dark" ? "#bfbfbf" : "#d8d8d8",
-    opacity: theme.palette.mode === "dark" ? undefined : 1,
-    height: 3,
-  },
-}));
-
-function AirbnbThumbComponent(props) {
-  const { children, ...other } = props;
-  return (
-    <SliderThumb {...other}>
-      {" "}
-      {children} <span className="airbnb-bar" />
-      <span className="airbnb-bar" />
-      <span className="airbnb-bar" />
-    </SliderThumb>
-  );
-}
-
-AirbnbThumbComponent.propTypes = {
-  children: PropTypes.node,
+const merge = (first, second) => {
+  for (let i = 0; i < second.length; i++) {
+    for (let j = 0; j < second[i].data.length; j++) {
+      first.push(second[i].data[j]);
+    }
+  }
+  return first;
 };
 
-const RangeSelector = ({ datasets }) => {
-    const [range, setRange] = useState([0, 1000000000])
-    const handleRangeChange = (event, newValue, activeThumb) => {
-        setRange(newValue)
-    }
-    Array.prototype.push.apply(datasets)
-    console.log(Math.min(...datasets.map(d => d['C11'])), Math.max(...datasets.map(d => d['C11'])))
+const rangeList = ["C11", "C12", "C22", "C16", "C26", "C66"];
+
+const RangeSelector = ({ datasets, filteredDatasets, handleChange }) => {
+  const data = merge([], datasets);
+  const filtered = merge([], filteredDatasets)
+  const handleSliderChange = (name, value) => {
+    handleChange(name, value);
+  };
   return (
     <div className={styles["property-range"]}>
       <p className={styles["range-title"]}>Property Range</p>
-      <div className={styles["range-content-line"]}>
-        <p>C11</p>
-        <AirbnbSlider
-          slots={{ thumb: AirbnbThumbComponent }}
-          getAriaLabel={() => "C11 Range Selector"}
-          defaultValue={[Math.min(...datasets.map(d => d['C11'])), Math.max(...datasets.map(d => d['C11']))]}
-          value={range}
-          onChange={handleRangeChange}
-          disableSwap
-        />
-      </div>
+      {rangeList.map((name, index) => (
+        <div className={styles["range-content-line"]}>
+          <p>{name}</p>
+          <Slider
+            range={{ draggableTrack: true }}
+            defaultValue={[
+              Math.min(...data.map((d) => d[name])),
+              Math.max(...data.map((d) => d[name])),
+            ]}
+            value={[Math.min(...filtered.map((d) => d[name])), Math.max(...filtered.map((d) => d[name]))]}
+            min={Math.min(...data.map((d) => d[name]))}
+            max={Math.max(...data.map((d) => d[name]))}
+            onChange={(value, filteredDatasets) => handleSliderChange(name, value)}
+          />
+        </div>
+      ))}
+
+      {/* <div className={styles["range-content-line"]}>
+            <p>C12</p>
+            <Slider
+            range={{draggableTrack: true}}
+            defaultValue={[Math.min(...data.map(d => d['C12'])), Math.max(...data.map(d => d['C12']))]}
+            min={Math.min(...data.map(d => d['C12']))}
+            max={Math.max(...data.map(d => d['C12']))}
+            onChange={(value) => handleChange("C12", value)}
+            />
+          </div> */}
     </div>
   );
 };

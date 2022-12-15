@@ -45,9 +45,15 @@ const BootstrapInput = styled(InputBase)(({ theme }) => ({
 
 const regex = /[-+]?[0-9]*\.?[0-9]+([eE]?[-+]?[0-9]+)/g;
 
+const getDelta = (vals, newVals) => {
+  const d0 = newVals[0] - vals[0];
+	const d1 = newVals[1] - vals[1];
+	return d0 === 0 ? d1 : d0;
+}
+
 export default function Scatter() {
-  //   const [initialData, setInitialData] = useState([]);
   const [datasets, setDatasets] = useState([]);
+  const [filteredDatasets, setFilteredDatasets] = useState([])
   const [dataPoint, setDataPoint] = useState({});
 
   const [query1, setQuery1] = useState(
@@ -56,6 +62,7 @@ export default function Scatter() {
   const [query2, setQuery2] = useState(
     "C12"
   );
+
   const [dataset, setDataset] = useState("");
 
   const Youngs = dynamic(() => import("../components/youngs"), {
@@ -78,6 +85,13 @@ export default function Scatter() {
     setQuery2(e.target.value);
   };
 
+  const handleRangeChange = (name, value) => {
+    let filteredDatasets = datasets.map((set, i) => {
+      let filtered = set.data.filter(d => (d[name] >= value[0] && d[name] <= value[1]))
+      return {name: set.name, data: filtered}; 
+    })
+    setFilteredDatasets(filteredDatasets)
+  }
   const datasetsSrc = [
     "https://gist.githubusercontent.com/GeorgeBian/5b65c9227408b2ba00e4db9bc3b4d25b/raw/ae6ca7123c1c0c0621595c3dd8d4bd983f99fefc/ideal_2d_data_small_sample2.csv",
     "https://gist.githubusercontent.com/Cynthia2019/837a01c52c4c17d7b31dbd8ad3045878/raw/57fc554bfb9f5df3c92d3309147b4c6c0b1190ca/ideal_2d_data_small_sample.csv",
@@ -118,6 +132,13 @@ export default function Scatter() {
             data: processedData,
           },
         ]);
+        setFilteredDatasets((datasets) => [
+          ...datasets,
+          {
+            name: i,
+            data: processedData,
+          },
+        ]);
         setDataPoint(processedData[0]);
       });
     });
@@ -138,7 +159,7 @@ export default function Scatter() {
             </p>
           </div>
           <ScatterWrapper
-            data={datasets}
+            data={filteredDatasets}
             setDataPoint={setDataPoint}
             query1={query1}
             query2={query2}
@@ -158,7 +179,7 @@ export default function Scatter() {
             query2={query2}
             handleQuery2Change={handleQuery2Change}
           />
-          <RangeSelector datasets={datasets}/>
+          <RangeSelector datasets={datasets} filteredDatasets={filteredDatasets} handleChange={handleRangeChange}/>
           {/* <div className={styles["property-range"]}>
             <p className={styles["range-title"]}>Property Range</p>
             <div className={styles["range-content-line"]}>
