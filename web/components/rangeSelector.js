@@ -4,6 +4,7 @@ import styles from "../styles/rangeSelector.module.css";
 
 const merge = (first, second) => {
   for (let i = 0; i < second.length; i++) {
+    console.log("range selector", second)
     for (let j = 0; j < second[i].data.length; j++) {
       first.push(second[i].data[j]);
     }
@@ -23,7 +24,7 @@ const RangeSelector = ({ datasets, filteredDatasets, handleChange }) => {
     <div className={styles["property-range"]}>
       <p className={styles["range-title"]}>Property Range</p>
       {rangeList.map((name, index) => (
-        <div className={styles["range-content-line"]}>
+        <div className={styles["range-content-line"]} key={index}>
           <p>{name}</p>
           <Slider
             range={{ draggableTrack: true }}
@@ -38,17 +39,6 @@ const RangeSelector = ({ datasets, filteredDatasets, handleChange }) => {
           />
         </div>
       ))}
-
-      {/* <div className={styles["range-content-line"]}>
-            <p>C12</p>
-            <Slider
-            range={{draggableTrack: true}}
-            defaultValue={[Math.min(...data.map(d => d['C12'])), Math.max(...data.map(d => d['C12']))]}
-            min={Math.min(...data.map(d => d['C12']))}
-            max={Math.max(...data.map(d => d['C12']))}
-            onChange={(value) => handleChange("C12", value)}
-            />
-          </div> */}
     </div>
   );
 };

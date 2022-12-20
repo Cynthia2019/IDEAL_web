@@ -3,58 +3,18 @@ import Header from "../components/header";
 import styles from "../styles/Home.module.css";
 import ScatterWrapper from "../components/scatterWrapper";
 import StructureWrapper from "../components/structureWrapper";
-import TextField from "@mui/material/TextField";
-import { styled } from "@mui/material/styles";
-import InputBase from "@mui/material/InputBase";
 import { csv } from "d3";
 import dynamic from "next/dynamic";
 import DataSelector from "../components/dataSelector";
 import RangeSelector from "../components/rangeSelector";
 
-const BootstrapInput = styled(InputBase)(({ theme }) => ({
-  "label + &": {
-    marginTop: theme.spacing(3),
-  },
-  "& .MuiInputBase-input": {
-    borderRadius: 4,
-    position: "relative",
-    backgroundColor: theme.palette.background.paper,
-    border: "1px solid #ced4da",
-    fontSize: 16,
-    padding: "10px 26px 10px 12px",
-    transition: theme.transitions.create(["border-color", "box-shadow"]),
-    fontFamily: [
-      "-apple-system",
-      "BlinkMacSystemFont",
-      '"Segoe UI"',
-      "Roboto",
-      '"Helvetica Neue"',
-      "Arial",
-      "sans-serif",
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"',
-    ].join(","),
-    "&:focus": {
-      borderRadius: 4,
-      borderColor: "#80bdff",
-      boxShadow: "0 0 0 0.2rem rgba(0,123,255,.25)",
-    },
-  },
-}));
-
 const regex = /[-+]?[0-9]*\.?[0-9]+([eE]?[-+]?[0-9]+)/g;
-
-const getDelta = (vals, newVals) => {
-  const d0 = newVals[0] - vals[0];
-	const d1 = newVals[1] - vals[1];
-	return d0 === 0 ? d1 : d0;
-}
 
 export default function Scatter() {
   const [datasets, setDatasets] = useState([]);
   const [filteredDatasets, setFilteredDatasets] = useState([])
   const [dataPoint, setDataPoint] = useState({});
+  const [selectedDatasetNames, setSelectedDatasetNames] = useState([])
 
   const [query1, setQuery1] = useState(
     "C11"
@@ -62,8 +22,6 @@ export default function Scatter() {
   const [query2, setQuery2] = useState(
     "C12"
   );
-
-  const [dataset, setDataset] = useState("");
 
   const Youngs = dynamic(() => import("../components/youngs"), {
     ssr: false,
@@ -73,9 +31,14 @@ export default function Scatter() {
     ssr: false,
   });
 
-  const handleDatasetChange = (e) => {
-    setDataset(e.target.value);
-  };
+  const handleSelectedDatasetNameChange = (e) => {
+    const {
+      target: { value },
+    } = e;
+    setSelectedDatasetNames(value)
+    let newDatasets = datasets.filter(d => (value.includes(d.name)))
+    setFilteredDatasets(newDatasets)
+  }
 
   const handleQuery1Change = (e) => {
     setQuery1(e.target.value);
@@ -92,15 +55,19 @@ export default function Scatter() {
     })
     setFilteredDatasets(filteredDatasets)
   }
-  const datasetsSrc = [
-    "https://gist.githubusercontent.com/GeorgeBian/5b65c9227408b2ba00e4db9bc3b4d25b/raw/ae6ca7123c1c0c0621595c3dd8d4bd983f99fefc/ideal_2d_data_small_sample2.csv",
-    "https://gist.githubusercontent.com/Cynthia2019/837a01c52c4c17d7b31dbd8ad3045878/raw/57fc554bfb9f5df3c92d3309147b4c6c0b1190ca/ideal_2d_data_small_sample.csv",
-  ];
-
-
+  const datasetLinks = [
+    {
+      name: "free form 2D", 
+      src: "https://gist.githubusercontent.com/Cynthia2019/837a01c52c4c17d7b31dbd8ad3045878/raw/703d9fcdefcf28a084709ad6a98f403303aba5bd/ideal_freeform_2d_sample.csv",
+    },
+    {
+      name: "lattice 2D", 
+      src: "https://gist.githubusercontent.com/Cynthia2019/d840d03813d9b0fc13956430b8c42886/raw/6c82615e1bcce639938a008cc4af212f771627da/ideal_lattice_2d.csv"
+    }
+  ]
   useEffect(() => {
-    datasetsSrc.map((d, i) => {
-      csv(d).then((data) => {
+    datasetLinks.map((d, i) => {
+      csv(d.src).then((data) => {
         const processedData = data.map((d) => {
           let youngs = d.youngs.match(regex).map(parseFloat);
           let poisson = d.poisson.match(regex).map(parseFloat);
@@ -128,17 +95,18 @@ export default function Scatter() {
         setDatasets((datasets) => [
           ...datasets,
           {
-            name: i,
+            name: d.name,
             data: processedData,
           },
         ]);
         setFilteredDatasets((datasets) => [
           ...datasets,
           {
-            name: i,
+            name: d.name,
             data: processedData,
           },
         ]);
+        setSelectedDatasetNames((datasets) => [...datasets, d.name])
         setDataPoint(processedData[0]);
       });
     });
@@ -172,55 +140,16 @@ export default function Scatter() {
         </div>
         <div className={styles.selectors}>
           <DataSelector
-            dataset={dataset}
-            handleDatasetChange={handleDatasetChange}
+            // datasets={datasets}
+            // handleDatasetChange={handleDatasetChange}
+            selectedDatasetNames={selectedDatasetNames}
+            handleSelectedDatasetNameChange={handleSelectedDatasetNameChange}
             query1={query1}
             handleQuery1Change={handleQuery1Change}
             query2={query2}
             handleQuery2Change={handleQuery2Change}
           />
           <RangeSelector datasets={datasets} filteredDatasets={filteredDatasets} handleChange={handleRangeChange}/>
-          {/* <div className={styles["property-range"]}>
-            <p className={styles["range-title"]}>Property Range</p>
-            <div className={styles["range-content-line"]}>
-              <p>x-axis: {query1}</p>
-              <div className={styles["range-selection-line"]}>
-                <TextField
-                  id="range-selector-1"
-                  label="Min"
-                  type="number"
-                  variant="standard"
-                  sx={{ width: "40%" }}
-                />
-                <TextField
-                  id="range-selector-2"
-                  label="Max"
-                  type="number"
-                  variant="standard"
-                  sx={{ width: "40%" }}
-                />
-              </div>
-            </div>
-            <div className={styles["range-content-line"]}>
-              <p>y-axis: {query2}</p>
-              <div className={styles["range-selection-line"]}>
-                <TextField
-                  id="range-selector-3"
-                  label="Min"
-                  type="number"
-                  variant="standard"
-                  sx={{ width: "40%" }}
-                />
-                <TextField
-                  id="range-selector-4"
-                  label="Max"
-                  type="number"
-                  variant="standard"
-                  sx={{ width: "40%" }}
-                />
-              </div>
-            </div>
-          </div> */}
         </div>
       </div>
     </div>
