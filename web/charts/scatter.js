@@ -3,6 +3,11 @@ import * as d3 from "d3";
 const circleOriginalSize = 5;
 const circleFocusSize = 7;
 
+const legendItemSize = 12;
+const legendSpacing = 4;
+const xOffset = 50;
+const yOffset = 10;
+
 const SIZE = 600;
 
 const MARGIN = {
@@ -14,15 +19,13 @@ const MARGIN = {
 const WIDTH = SIZE - MARGIN.LEFT - MARGIN.RIGHT;
 const HEIGHT = SIZE - MARGIN.TOP - MARGIN.BOTTOM;
 
-const colors = ["#8A8BD0", "#FFB347", "#89CFF0"];
-
 function expo(x, f) {
   if (x < 1000 && x > -1000) return x;
   return Number(x).toExponential(f);
 }
 
 class Scatter {
-  constructor(element, data, setDataPoint, query1Range, query2Range) {
+  constructor(element, legendElement,data, setDataPoint, query1Range, query2Range) {
     this.svg = d3
       .select(element)
       .append("svg")
@@ -31,6 +34,14 @@ class Scatter {
       .append("g")
       .attr("class", "scatter-plot-plot")
       .attr("transform", `translate(${MARGIN.LEFT}, ${MARGIN.TOP})`);
+
+    //Legend
+    this.legend = d3
+      .select(legendElement)
+      .append("svg")
+      .attr("width", 120)
+      .append("g")
+      .attr("class", "scatter-plot-legend");
 
     // Labels
     this.xLabel = this.svg
@@ -54,11 +65,11 @@ class Scatter {
     // Append group el to display both axes
     this.yAxisGroup = this.svg.append("g");
 
-    this.update(data, element, setDataPoint, this.query1, this.query2);
+    this.update(data, element, legendElement, setDataPoint, this.query1, this.query2);
   }
   //query1: x-axis
   //query2: y-axis
-  update(data, element, setDataPoint, query1, query2) {
+  update(data, element, legendElement, setDataPoint, query1, query2) {
     this.data = data;
     this.query1 = query1;
     this.query2 = query2;
@@ -66,17 +77,18 @@ class Scatter {
     data.map((d, i) => {
       for (let data of d.data) {
         data.name = d.name;
-        data.color = colors[i];
+        data.color = d.color;
       }
       datasets.push(d.data);
     });
     let finalData = [].concat(...datasets);
+    d3.select(legendElement).selectAll(".legend").remove();
     d3.select(element).select(".tooltip").remove();
-    d3.selectAll("circle").remove();
+    d3.selectAll(".dataCircle").remove();
     let yScale = d3
       .scaleLinear()
       .domain([
-        d3.min(finalData, (d) => d[query2]), 
+        d3.min(finalData, (d) => d[query2]),
         d3.max(finalData, (d) => d[query2]),
       ])
       .range([HEIGHT, 0]);
@@ -183,12 +195,36 @@ class Scatter {
         xAxisGroup.call(xAxisCall);
         yAxisGroup.call(yAxisCall);
 
-        d3.selectAll("circle")
+        d3.selectAll(".dataCircle")
           .data(finalData)
           .attr("cy", (d) => newYScale(d[query2]))
           .attr("cx", (d) => newXScale(d[query1]));
       });
 
+    let legend = this.legend.selectAll(".legend").data(data);
+
+    legend.exit().remove();
+
+    legend
+      .enter()
+      .append("circle")
+      .attr("class", "legend")
+      .attr("r", circleOriginalSize)
+      .attr("cx", 10)
+      .attr("cy", (d, i) => (circleOriginalSize * 2 + legendSpacing) * i + 30)
+      .style("fill", (d) => d.color);
+    //Create legend labels
+    legend
+      .enter()
+      .append("text")
+      .attr("class", "legend")
+      .attr("x", 20)
+      .attr("y", (d, i) => (circleOriginalSize * 2 + legendSpacing) * i + 30)
+      .text((d) => d.name)
+      .attr("text-anchor", "left")
+      .style("alignment-baseline", "middle");
+
+      legend.exit().remove();
     this.svg
       .append("rect")
       .attr("width", WIDTH + MARGIN.LEFT + MARGIN.RIGHT)
@@ -197,10 +233,11 @@ class Scatter {
       .style("pointer-events", "all")
       .attr("transform", `translate(${MARGIN.LEFT}, ${MARGIN.TOP})`)
       .call(zoom);
+
     let circles = this.svg
       .append("g")
       .attr("clip-path", "url(#clip)")
-      .selectAll("circle")
+      .selectAll(".dataCircle")
       .data(finalData);
     circles.exit().transition().attr("r", 0).remove();
     circles
@@ -208,6 +245,7 @@ class Scatter {
       .append("circle")
       .join(circles)
       .attr("r", circleOriginalSize)
+      .attr("class", "dataCircle")
       .attr("fill", (d) => d.color)
       .style("stroke", "none")
       .style("stroke-width", 2)

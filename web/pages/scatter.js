@@ -59,10 +59,12 @@ export default function Scatter() {
     {
       name: "free form 2D", 
       src: "https://gist.githubusercontent.com/Cynthia2019/837a01c52c4c17d7b31dbd8ad3045878/raw/703d9fcdefcf28a084709ad6a98f403303aba5bd/ideal_freeform_2d_sample.csv",
+      color: '#8A8BD0'
     },
     {
       name: "lattice 2D", 
-      src: "https://gist.githubusercontent.com/Cynthia2019/d840d03813d9b0fc13956430b8c42886/raw/6c82615e1bcce639938a008cc4af212f771627da/ideal_lattice_2d.csv"
+      src: "https://gist.githubusercontent.com/Cynthia2019/d840d03813d9b0fc13956430b8c42886/raw/6c82615e1bcce639938a008cc4af212f771627da/ideal_lattice_2d.csv",
+      color: '#FFB347'
     }
   ]
   useEffect(() => {
@@ -97,6 +99,7 @@ export default function Scatter() {
           {
             name: d.name,
             data: processedData,
+            color: d.color
           },
         ]);
         setFilteredDatasets((datasets) => [
@@ -104,6 +107,7 @@ export default function Scatter() {
           {
             name: d.name,
             data: processedData,
+            color: d.color
           },
         ]);
         setSelectedDatasetNames((datasets) => [...datasets, d.name])
