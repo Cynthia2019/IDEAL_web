@@ -77,10 +77,9 @@ const DataSelector = ({
   query2,
   handleQuery2Change,
 }) => {
-  console.log("dataselector", selectedDatasetNames);
   return (
     <div className={styles["data-selector"]}>
-      <div className={styles["data-content-line"]}>
+      <div className={styles["content-line"]}>
         <p className={styles["data-title"]}>Data</p>
         <FormControl sx={{ m: 1}}>
           <InputLabel htmlFor="dataset-select">

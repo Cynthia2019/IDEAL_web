@@ -3,10 +3,7 @@ import * as d3 from "d3";
 const circleOriginalSize = 5;
 const circleFocusSize = 7;
 
-const legendItemSize = 12;
 const legendSpacing = 4;
-const xOffset = 50;
-const yOffset = 10;
 
 const SIZE = 600;
 
@@ -19,13 +16,24 @@ const MARGIN = {
 const WIDTH = SIZE - MARGIN.LEFT - MARGIN.RIGHT;
 const HEIGHT = SIZE - MARGIN.TOP - MARGIN.BOTTOM;
 
+var currXScale 
+var currYScale
+
 function expo(x, f) {
   if (x < 1000 && x > -1000) return x;
   return Number(x).toExponential(f);
 }
 
+function isBrushed(brush_coords, cx, cy) {
+  var x0 = brush_coords[0][0],
+    x1 = brush_coords[1][0],
+    y0 = brush_coords[0][1],
+    y1 = brush_coords[1][1];
+  return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1; // This return TRUE or FALSE depending on if the points is in the selected area
+}
+
 class Scatter {
-  constructor(element, legendElement,data, setDataPoint, query1Range, query2Range) {
+  constructor(element, legendElement, data, setDataPoint) {
     this.svg = d3
       .select(element)
       .append("svg")
@@ -65,7 +73,14 @@ class Scatter {
     // Append group el to display both axes
     this.yAxisGroup = this.svg.append("g");
 
-    this.update(data, element, legendElement, setDataPoint, this.query1, this.query2);
+    this.update(
+      data,
+      element,
+      legendElement,
+      setDataPoint,
+      this.query1,
+      this.query2
+    );
   }
   //query1: x-axis
   //query2: y-axis
@@ -74,6 +89,7 @@ class Scatter {
     this.query1 = query1;
     this.query2 = query2;
     let datasets = [];
+
     data.map((d, i) => {
       for (let data of d.data) {
         data.name = d.name;
@@ -81,10 +97,13 @@ class Scatter {
       }
       datasets.push(d.data);
     });
+
     let finalData = [].concat(...datasets);
+
     d3.select(legendElement).selectAll(".legend").remove();
     d3.select(element).select(".tooltip").remove();
     d3.selectAll(".dataCircle").remove();
+
     let yScale = d3
       .scaleLinear()
       .domain([
@@ -100,7 +119,9 @@ class Scatter {
         d3.max(finalData, (d) => d[query1]),
       ])
       .range([0, WIDTH]);
-
+    
+    currXScale = xScale
+    currYScale = yScale
     // Add a clipPath: everything out of this area won't be drawn.
     let clip = this.svg
       .append("defs")
@@ -199,7 +220,18 @@ class Scatter {
           .data(finalData)
           .attr("cy", (d) => newYScale(d[query2]))
           .attr("cx", (d) => newXScale(d[query1]));
+
+        currXScale = newXScale
+        currYScale = newYScale
       });
+
+    let brush = d3
+      .brush()
+      .extent([
+        [0, 0],
+        [WIDTH, HEIGHT],
+      ])
+      .on("start brush end", brushed);
 
     let legend = this.legend.selectAll(".legend").data(data);
 
@@ -224,7 +256,9 @@ class Scatter {
       .attr("text-anchor", "left")
       .style("alignment-baseline", "middle");
 
-      legend.exit().remove();
+    legend.exit().remove();
+
+    this.svg.call(brush);
     this.svg
       .append("rect")
       .attr("width", WIDTH + MARGIN.LEFT + MARGIN.RIGHT)
@@ -233,12 +267,14 @@ class Scatter {
       .style("pointer-events", "all")
       .attr("transform", `translate(${MARGIN.LEFT}, ${MARGIN.TOP})`)
       .call(zoom);
+      this.svg.call(brush);
 
     let circles = this.svg
       .append("g")
       .attr("clip-path", "url(#clip)")
       .selectAll(".dataCircle")
       .data(finalData);
+
     circles.exit().transition().attr("r", 0).remove();
     circles
       .enter()
@@ -257,6 +293,14 @@ class Scatter {
       .attr("cy", (d) => yScale(d[query2]));
 
     circles.exit().transition().attr("r", 0).remove();
+
+    function brushed(event) {
+      console.log("brush event selections", xScale, currXScale);
+      if (event.selection) {
+        d3.selectAll('.dataCircle').data(finalData).classed("selected", function(d) {return isBrushed(event.selection, currXScale(d[query1]), currYScale(d[query2]))})
+
+      }
+    }
   }
 }
 
