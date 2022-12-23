@@ -51,7 +51,7 @@ const getDelta = (vals, newVals) => {
 	return d0 === 0 ? d1 : d0;
 }
 
-export default function Scatter() {
+export default function Scatter_page() {
   const [datasets, setDatasets] = useState([]);
   const [filteredDatasets, setFilteredDatasets] = useState([])
   const [dataPoint, setDataPoint] = useState({});

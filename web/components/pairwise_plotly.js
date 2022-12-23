@@ -2,7 +2,7 @@ import {useState, useEffect, useMemo} from "react";
 import Plot from "react-plotly.js";
 import * as d3 from 'd3';
 
-export default function pairwise() {
+export default function pairwise_plotly() {
     const [data, setData] = useState([]);
     const [layout, setLayout] = useState([]);
      const [config, setConfig] = useState([]);
@@ -101,6 +101,7 @@ export default function pairwise() {
             data={data}
             layout={layout}
             config={config}
+            // onClick={() => alert({data})}
         />
     );
 }
