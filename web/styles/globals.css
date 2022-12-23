@@ -25,6 +25,12 @@ a {
   pointer-events: none; 
 }
 
+.selected {
+  opacity: 1 !important;
+  stroke: black !important;
+  stroke-width: 2px !important;
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
