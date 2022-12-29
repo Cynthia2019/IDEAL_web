@@ -18,6 +18,7 @@ export default function Scatter() {
   const [filteredDatasets, setFilteredDatasets] = useState([]);
   const [dataPoint, setDataPoint] = useState({});
   const [selectedDatasetNames, setSelectedDatasetNames] = useState([]);
+  const [selectedData, setSelectedData] = useState([])
 
   const [query1, setQuery1] = useState("C11");
   const [query2, setQuery2] = useState("C12");
@@ -56,6 +57,7 @@ export default function Scatter() {
     });
     setFilteredDatasets(filteredDatasets);
   };
+
   const datasetLinks = [
     {
       name: "free form 2D",
@@ -83,8 +85,12 @@ export default function Scatter() {
             C66: parseFloat(d.C66),
             condition: d.condition,
             symmetry: d.symmetry,
-            material_0: d.CM0,
-            material_1: d.CM1,
+            CM0: d.CM0,
+            CM1: d.CM1,
+            CM0_E: d.CM0_E, 
+            CM0_nu: d.CM0_nu, 
+            CM1_E: d.CM1_E, 
+            CM1_nu: d.CM1_nu,            
             geometry: d.geometry_full,
             youngs: youngs,
             poisson: poisson,
@@ -137,6 +143,7 @@ export default function Scatter() {
               setDataPoint={setDataPoint}
               query1={query1}
               query2={query2}
+              setSelectedData={setSelectedData}
             />
           </div>
           <div className={styles.subPlots}>
@@ -162,7 +169,7 @@ export default function Scatter() {
         </Row>
         <Row>
           <Col span={16}>
-          <SavePanel />
+          <SavePanel selectedData={selectedData}/>
           </Col>
           <Col span={8}>
             <MaterialInformation dataPoint={dataPoint}/>

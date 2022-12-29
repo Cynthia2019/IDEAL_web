@@ -5,13 +5,11 @@ import { styled } from '@mui/material/styles';
 import TableCell from '@mui/material/TableCell';
 import Paper from '@mui/material/Paper';
 import { AutoSizer, Column, Table } from 'react-virtualized';
-
 const classes = {
   flexContainer: 'ReactVirtualizedDemo-flexContainer',
   tableRow: 'ReactVirtualizedDemo-tableRow',
   tableRowHover: 'ReactVirtualizedDemo-tableRowHover',
   tableCell: 'ReactVirtualizedDemo-tableCell',
-  noClick: 'ReactVirtualizedDemo-noClick',
 };
 
 const styles = ({ theme }) => ({
@@ -153,61 +151,47 @@ MuiVirtualizedTable.propTypes = {
 
 const VirtualizedTable = styled(MuiVirtualizedTable)(styles);
 
-// ---
-
-const sample = [
-  ['Frozen yoghurt', 159, 6.0, 24, 4.0],
-  ['Ice cream sandwich', 237, 9.0, 37, 4.3],
-  ['Eclair', 262, 16.0, 24, 6.0],
-  ['Cupcake', 305, 3.7, 67, 4.3],
-  ['Gingerbread', 356, 16.0, 49, 3.9],
-];
-
-function createData(id, dessert, calories, fat, carbs, protein) {
-  return { id, dessert, calories, fat, carbs, protein };
-}
-
-const rows = [];
-
-for (let i = 0; i < 200; i += 1) {
-  const randomSelection = sample[Math.floor(Math.random() * sample.length)];
-  rows.push(createData(i, ...randomSelection));
-}
-
-export default function SaveDataTable() {
+export default function SaveDataTable({data}) {
   return (
     <Paper style={{ height: '100%', width: '100%' }}>
       <VirtualizedTable
-        rowCount={rows.length}
-        rowGetter={({ index }) => rows[index]}
+        rowCount={data.length}
+        rowGetter={({ index }) => data[index]}
         columns={[
           {
-            width: 200,
-            label: 'Dessert',
-            dataKey: 'dessert',
-          },
-          {
             width: 120,
-            label: 'Calories\u00A0(g)',
-            dataKey: 'calories',
+            label: 'C11',
+            dataKey: 'C11',
             numeric: true,
           },
           {
             width: 120,
-            label: 'Fat\u00A0(g)',
-            dataKey: 'fat',
+            label: 'C12',
+            dataKey: 'C12',
             numeric: true,
           },
           {
             width: 120,
-            label: 'Carbs\u00A0(g)',
-            dataKey: 'carbs',
+            label: 'C22',
+            dataKey: 'C22',
             numeric: true,
           },
           {
             width: 120,
-            label: 'Protein\u00A0(g)',
-            dataKey: 'protein',
+            label: 'C16',
+            dataKey: 'C16',
+            numeric: true,
+          },
+          {
+            width: 120,
+            label: 'C26',
+            dataKey: 'C26',
+            numeric: true,
+          },
+          {
+            width: 120,
+            label: 'C66',
+            dataKey: 'C66',
             numeric: true,
           },
         ]}

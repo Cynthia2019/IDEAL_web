@@ -1,17 +1,17 @@
 import React, { useRef, useState, useEffect } from "react";
 import Scatter from "../charts/Scatter";
 
-const ScatterWrapper = ({ data, element, setDataPoint, query1, query2 }) => {
+const ScatterWrapper = ({ data, element, setDataPoint, query1, query2, setSelectedData }) => {
   const chartArea = useRef(null);
   const legendArea = useRef(null)
   const [chart, setChart] = useState(null);
 
   useEffect(() => {
     if (!chart) {
-      setChart(new Scatter(chartArea.current, legendArea.current, data, setDataPoint));
+      setChart(new Scatter(chartArea.current, legendArea.current, data, setDataPoint, setSelectedData));
     } 
     else {
-        chart.update(data, chartArea.current, legendArea.current, setDataPoint, query1, query2);
+        chart.update(data, chartArea.current, legendArea.current, setDataPoint, query1, query2, setSelectedData);
 
     }
   }, [chart, query1, query2, data]);

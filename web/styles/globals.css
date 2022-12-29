@@ -15,6 +15,10 @@ a {
   box-sizing: border-box;
 }
 
+.dataCircle {
+  pointer-events: all;
+}
+
 .tooltip {
   position: absolute;
   z-index: 10;

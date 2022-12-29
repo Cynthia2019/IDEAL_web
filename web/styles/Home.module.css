@@ -69,17 +69,22 @@
     border: 3px solid #E4E0EE;
     margin: 10px 10px;
     padding: 20px;
-    height: 400px;
+    height: 500px;
 }
 
 .materialInformation {
     border: 3px solid #E4E0EE;
     margin: 10px 10px;
     padding: 20px;
-    height: 400px;
 }
 
 .mat-subtitle-line {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.mat-content-line {
     display: flex;
     flex-direction: row;
     align-items: center;

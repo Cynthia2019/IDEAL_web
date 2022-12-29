@@ -102,7 +102,7 @@ const DataSelector = ({
             MenuProps={MenuProps}
           >
             {datasetNames.map((name, i) => (
-              <MenuItem value={name} key={i}>
+              <MenuItem value={name} key={`${name}-${i}`}>
                 {name}
               </MenuItem>
             ))}
