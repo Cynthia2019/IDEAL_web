@@ -49,13 +49,13 @@ export default function Scatter() {
   };
 
   const handleRangeChange = (name, value) => {
-    let filteredDatasets = datasets.map((set, i) => {
+    let filtered_datasets = filteredDatasets.map((set, i) => {
       let filtered = set.data.filter(
         (d) => d[name] >= value[0] && d[name] <= value[1]
       );
       return { name: set.name, data: filtered, color: set.color };
     });
-    setFilteredDatasets(filteredDatasets);
+    setFilteredDatasets(filtered_datasets);
   };
 
   const datasetLinks = [

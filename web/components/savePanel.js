@@ -8,7 +8,6 @@ import { CSVLink } from "react-csv";
 
 const SavePanel = ({ selectedData }) => {
     const csvLink = useRef() 
-    console.log('save panel', selectedData)
   const handleDownloadClick = () => {
     setTimeout(() => {
         csvLink.current.link.click();
