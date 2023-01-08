@@ -300,18 +300,95 @@ class Pairwise_d3 {
         const xAxis = d3.axisBottom().ticks(cellWidth / 50);
         const yAxis = d3.axisLeft().ticks(cellHeight / 35);
 
-        console.log("I");
-        console.log(I);
-        this.cell.each(function ([x, y]) {
+        // console.log("I");
+        // console.log(I);
+        const d_xScales = X.map(X => d3.scaleBand(d3.extent(X), [0, cellWidth]));
+        const d_yScales = Y.map(Y => yType(d3.extent(Y), [cellHeight, 0]));
+        console.log('X')
+        console.log(X)
 
-            const temp = d3.select(this).selectAll("circle")
-                //.data(finalData)
-                .data(I.filter(i => !isNaN(X[x][i]) && !isNaN(Y[y][i])))
-                .join("circle")
-                .attr("r", 3.5)
-                .attr("cx", i => xScales[x](X[x][i]))
-                .attr("cy", i => yScales[y](Y[y][i]))
-                .attr("fill", (i) => finalData[i].color);
+        this.cell.each(function ([x, y]) {
+            if (x != y) {
+
+                console.log('Y')
+                console.log(Y)
+                const temp = d3.select(this).selectAll("circle")
+                    //.data(finalData)
+                    .data(I.filter(i => !isNaN(X[x][i]) && !isNaN(Y[y][i])))
+                    .join("circle")
+                    .attr("r", 3.5)
+                    .attr("cx", i => xScales[x](X[x][i]))
+                    .attr("cy", i => yScales[y](Y[y][i]))
+                    .attr("fill", (i) => finalData[i].color);
+                //finalData[i].color
+            } else {
+                // const line = d3.line()
+                //     // .defined((i) =>  finalData[i[0]])
+                //     // .curve(d3.curveLinear)
+                //     .x(i => xScales[x](X[x][i]))
+                //     .y(i => yScales[y](Y[y][i]));
+                // d3.select(this)
+                //     .append("path")
+                //     .attr("fill", "none")
+                //     .attr("stroke", (i) => finalData[i[0]].color)
+                //     .attr("stroke-width", 1.5)
+                //     .attr("stroke-linecap", "round")
+                //     .attr("stroke-linejoin", "round")
+                //     .attr("stroke-opacity", 1)
+                //     .attr("d", line(I));
+
+                const thresholds = 40
+                const Y0 = d3.map(Y[y], () => 1);
+                const bins = d3.bin().thresholds(thresholds).value(i => X[x][i])(I);
+                const Y1 = Array.from(bins, I => d3.sum(I, i => Y0[i]));
+                console.log('binss and y1')
+                console.log(bins)
+                console.log(Y1)
+                const normalize = true;
+                if (normalize) {
+                    const total = d3.sum(Y1);
+                    for (let i = 0; i < Y1.length; ++i) Y1[i] /= total;
+                }
+
+                // Compute default domains.
+                const xDomain = [bins[0].x0, bins[bins.length - 1].x1];
+                const yDomain = [0, d3.max(Y1)];
+
+                // Construct scales and axes.
+                const xRange = [0, cellWidth];
+                const yRange = [cellHeight, 0];
+                const xScale = xType(xDomain, xRange);
+                const yScale = yType(yDomain, yRange);
+
+                const insetLeft = 0.5;
+                const insetRight = 0.5;
+
+                console.log("bin");
+                console.log(bins);
+                d3.select(this)
+                    .append("g")
+                    .attr("fill", "#8A8BD0")
+                    .selectAll("rect")
+                    .data(bins)
+                    .join("rect")
+                    .attr("x", d => xScale(d.x0) + insetLeft)
+                    .attr("width", d => Math.max(0, xScale(d.x1) - xScale(d.x0) - insetLeft - insetRight))
+                    .attr("y", (d, i) => yScale(Y1[i]))
+                    .attr("height", (d, i) => yScale(0) - yScale(Y1[i]))
+                    .append("title")
+                //
+                // .text((d, i) => [`${d.x0} ≤ x < ${d.x1}`, yFormat(Y1[i])].join("\n"));
+                // d3.select(this)
+                //     .append("g")
+                //     .attr("fill", "#8A8BD0")
+                //     .selectAll("rect")
+                //     .data(I)
+                //     .join("rect")
+                //     .attr("x", i => d_xScales[x](X[x][i]))
+                //     .attr("y", i => d_yScales[y](Y[y][i]))
+                //     .attr("height", i => d_yScales[y](0) - d_yScales[y](Y[y][i]))
+                //     .attr("width", d_xScales[x].bandwidth())
+            }
         });
 
     }

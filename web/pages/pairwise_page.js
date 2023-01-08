@@ -168,14 +168,14 @@ export default function Scatter() {
             />
           </div>
         </Row>
-        <Row>
-          <Col span={16}>
-          <SavePanel selectedData={selectedData}/>
-          </Col>
-          <Col span={8}>
-            <MaterialInformation dataPoint={dataPoint}/>
-          </Col>
-        </Row>
+        {/*<Row>*/}
+        {/*  <Col span={16}>*/}
+        {/*  <SavePanel selectedData={selectedData}/>*/}
+        {/*  </Col>*/}
+        {/*  <Col span={8}>*/}
+        {/*    <MaterialInformation dataPoint={dataPoint}/>*/}
+        {/*  </Col>*/}
+        {/*</Row>*/}
       </div>
     </div>
   );
