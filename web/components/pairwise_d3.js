@@ -261,26 +261,26 @@ class Pairwise_d3 {
         yType = d3.scaleLinear, // the y-scale type
         zDomain, // array of z-values
         fillOpacity = 0.7, // opacity of the dots
-        colors = d3.schemeCategory10, // array of colors for z
+        colors = [], // array of colors for z
     } = {}, container) {
         console.log("updating...");
         let datasets = [];
-
         data.map((d, i) => {
             for (let data of d.data) {
                 data.name = d.name;
                 data.color = d.color;
             }
             datasets.push(d.data);
+            colors.push(d.color);
         });
-
+        console.log('datasets')
+        console.log(datasets)
+        console.log(colors)
         let finalData = [].concat(...datasets);
         // Compute values (and promote column names to accessors).
         const X = d3.map(x, x => d3.map(finalData, typeof x === "function" ? x : d => +d[x]));
         const Y = d3.map(y, y => d3.map(finalData, typeof y === "function" ? y : d => +d[y]));
         const Z = d3.map(finalData, z);
-        console.log('x');
-        console.log(X);
 
         // Compute default z-domain, and unique the z-domain.
         if (zDomain === undefined) zDomain = Z;
@@ -300,18 +300,9 @@ class Pairwise_d3 {
         const xAxis = d3.axisBottom().ticks(cellWidth / 50);
         const yAxis = d3.axisLeft().ticks(cellHeight / 35);
 
-        // console.log("I");
-        // console.log(I);
-        const d_xScales = X.map(X => d3.scaleBand(d3.extent(X), [0, cellWidth]));
-        const d_yScales = Y.map(Y => yType(d3.extent(Y), [cellHeight, 0]));
-        console.log('X')
-        console.log(X)
-
         this.cell.each(function ([x, y]) {
             if (x != y) {
 
-                console.log('Y')
-                console.log(Y)
                 const temp = d3.select(this).selectAll("circle")
                     //.data(finalData)
                     .data(I.filter(i => !isNaN(X[x][i]) && !isNaN(Y[y][i])))
@@ -322,6 +313,7 @@ class Pairwise_d3 {
                     .attr("fill", (i) => finalData[i].color);
                 //finalData[i].color
             } else {
+                //drawing a distribution line
                 // const line = d3.line()
                 //     // .defined((i) =>  finalData[i[0]])
                 //     // .curve(d3.curveLinear)
@@ -336,48 +328,51 @@ class Pairwise_d3 {
                 //     .attr("stroke-linejoin", "round")
                 //     .attr("stroke-opacity", 1)
                 //     .attr("d", line(I));
+                datasets.forEach((element, index, arr) => {
+                    let a = columns;
+                    let b = columns;
+                    let X0 = d3.map(a, a => d3.map(element, typeof a === "function" ? a : d => +d[a]));
+                    let Y0 = d3.map(b, b => d3.map(element, typeof b === "function" ? b : d => +d[b]));
+                    const thresholds = 40
+                    Y0 = d3.map(Y0[y], () => 1);
+                    const bins = d3.bin().thresholds(thresholds).value(i => X0[x][i])(I);
+                    const Y1 = Array.from(bins, I => d3.sum(I, i => Y0[i]));
+                    const normalize = true;
+                    // if (normalize) {
+                    //     const total = d3.sum(Y1);
+                    //     for (let i = 0; i < Y1.length; ++i) Y1[i] /= total;
+                    // }
 
-                const thresholds = 40
-                const Y0 = d3.map(Y[y], () => 1);
-                const bins = d3.bin().thresholds(thresholds).value(i => X[x][i])(I);
-                const Y1 = Array.from(bins, I => d3.sum(I, i => Y0[i]));
-                console.log('binss and y1')
-                console.log(bins)
-                console.log(Y1)
-                const normalize = true;
-                if (normalize) {
-                    const total = d3.sum(Y1);
-                    for (let i = 0; i < Y1.length; ++i) Y1[i] /= total;
-                }
+                    // Compute default domains.
+                    const xDomain = [bins[0].x0, bins[bins.length - 1].x1];
+                    const yDomain = [0, d3.max(Y1)];
 
-                // Compute default domains.
-                const xDomain = [bins[0].x0, bins[bins.length - 1].x1];
-                const yDomain = [0, d3.max(Y1)];
+                    // Construct scales and axes.
+                    const xRange = [0, cellWidth];
+                    const yRange = [cellHeight, 0];
+                    const xScale = xType(xDomain, xRange);
+                    const yScale = yType(yDomain, yRange);
 
-                // Construct scales and axes.
-                const xRange = [0, cellWidth];
-                const yRange = [cellHeight, 0];
-                const xScale = xType(xDomain, xRange);
-                const yScale = yType(yDomain, yRange);
+                    const insetLeft = 0.5;
+                    const insetRight = 0.5;
+                    let yFormat = normalize ? "%" : undefined
+                    yFormat = yScale.tickFormat(100, yFormat);
+                    console.log("Y")
+                    d3.select(this)
+                        .append("g")
+                        .selectAll("rect")
+                        .data(bins)
+                        .join("rect")
+                        //.attr("fill", (i) => i[0] ? finalData[i[0]].color : "#8A8BD0")
+                        .attr("fill", colors[index])
+                        .attr("x", d => xScale(d.x0) + insetLeft)
+                        .attr("width", d => (bins.length == 1) ? 5 : Math.max(0, xScale(d.x1) - xScale(d.x0) - insetLeft - insetRight))
+                        .attr("y", (d, i) => yScale(Y1[i]))
+                        .attr("height", (d, i) => yScale(0) - yScale(Y1[i]))
+                        .append("title")
+                        .text((d, i) => [`${d.x0} ≤ x < ${d.x1}`, yFormat(Y1[i])].join("\n"));
+                })
 
-                const insetLeft = 0.5;
-                const insetRight = 0.5;
-
-                console.log("bin");
-                console.log(bins);
-                d3.select(this)
-                    .append("g")
-                    .attr("fill", "#8A8BD0")
-                    .selectAll("rect")
-                    .data(bins)
-                    .join("rect")
-                    .attr("x", d => xScale(d.x0) + insetLeft)
-                    .attr("width", d => Math.max(0, xScale(d.x1) - xScale(d.x0) - insetLeft - insetRight))
-                    .attr("y", (d, i) => yScale(Y1[i]))
-                    .attr("height", (d, i) => yScale(0) - yScale(Y1[i]))
-                    .append("title")
-                //
-                // .text((d, i) => [`${d.x0} ≤ x < ${d.x1}`, yFormat(Y1[i])].join("\n"));
                 // d3.select(this)
                 //     .append("g")
                 //     .attr("fill", "#8A8BD0")
