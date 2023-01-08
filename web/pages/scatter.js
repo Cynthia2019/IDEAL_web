@@ -143,6 +143,7 @@ export default function Scatter() {
               setDataPoint={setDataPoint}
               query1={query1}
               query2={query2}
+              selectedData={selectedData}
               setSelectedData={setSelectedData}
             />
           </div>
