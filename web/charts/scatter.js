@@ -16,9 +16,6 @@ const MARGIN = {
 const WIDTH = SIZE - MARGIN.LEFT - MARGIN.RIGHT;
 const HEIGHT = SIZE - MARGIN.TOP - MARGIN.BOTTOM;
 
-var currXScale;
-var currYScale;
-
 function expo(x, f) {
   if (x < 1000 && x > -1000) return x;
   return Number(x).toExponential(f);
@@ -33,7 +30,15 @@ function isBrushed(brush_coords, cx, cy) {
 }
 
 class Scatter {
-  constructor(element, legendElement, data, setDataPoint, setSelectedData) {
+  constructor(
+    element,
+    legendElement,
+    data,
+    setDataPoint,
+    selectedData,
+    setSelectedData,
+    view
+  ) {
     this.svg = d3
       .select(element)
       .append("svg")
@@ -73,6 +78,9 @@ class Scatter {
     // Append group el to display both axes
     this.yAxisGroup = this.svg.append("g");
 
+    this.xScale;
+    this.yScale;
+
     this.update(
       data,
       element,
@@ -80,7 +88,10 @@ class Scatter {
       setDataPoint,
       this.query1,
       this.query2,
-      setSelectedData
+      selectedData,
+      setSelectedData,
+      view,
+      false
     );
   }
   //query1: x-axis
@@ -92,7 +103,11 @@ class Scatter {
     setDataPoint,
     query1,
     query2,
-    setSelectedData
+    selectedData,
+    setSelectedData,
+    view,
+    reset,
+    setReset
   ) {
     this.data = data;
     this.query1 = query1;
@@ -113,10 +128,6 @@ class Scatter {
     d3.select(element).select(".tooltip").remove();
     d3.selectAll(".dataCircle").remove();
 
-    let selected = [];
-    d3.selectAll(".selected").each((d, i) => selected.push(d));
-    setSelectedData(selected);
-
     let yScale = d3
       .scaleLinear()
       .domain([
@@ -133,8 +144,9 @@ class Scatter {
       ])
       .range([0, WIDTH]);
 
-    currXScale = xScale;
-    currYScale = yScale;
+    this.xScale = xScale;
+    this.yScale = yScale;
+
     // Add a clipPath: everything out of this area won't be drawn.
     let clip = this.svg
       .append("defs")
@@ -146,13 +158,13 @@ class Scatter {
       .attr("x", 0)
       .attr("y", 0);
 
-    let xAxisCall = d3.axisBottom(xScale).tickFormat((x) => `${expo(x, 2)}`);
-    let xAxisGroup = this.xAxisGroup;
-    xAxisGroup.transition().duration(500).call(xAxisCall);
+    let xAxisCall = d3
+      .axisBottom(this.xScale)
+      .tickFormat((x) => `${expo(x, 2)}`);
+    this.xAxisGroup.transition().duration(500).call(xAxisCall);
 
-    let yAxisCall = d3.axisLeft(yScale).tickFormat((y) => `${expo(y, 2)}`);
-    let yAxisGroup = this.yAxisGroup;
-    yAxisGroup.transition().duration(500).call(yAxisCall);
+    let yAxisCall = d3.axisLeft(this.yScale).tickFormat((y) => `${expo(y, 2)}`);
+    this.yAxisGroup.transition().duration(500).call(yAxisCall);
     this.xLabel.text(this.query1);
     this.yLabel.text(this.query2);
 
@@ -206,14 +218,20 @@ class Scatter {
         .style("fill-opacity", 0.8);
     };
 
-    let mousedown = function(e, d) {
-      let target = d3.select(this)
-      target.classed("selected", !target.classed('selected'))
+    let mousedown = function (e, d) {
+      let target = d3.select(this);
+      if (view == "brush-on") {
+        target.classed("selected", true);
+      } else if (view == "brush-off") {
+        target.classed("selected", false);
+      }
 
       let selected = [];
       d3.selectAll(".selected").each((d, i) => selected.push(d));
       setSelectedData(selected);
-    }
+    };
+    let zoomedXScale = this.xScale;
+    let zoomedYScale = this.yScale;
 
     // Set the zoom and Pan features: how much you can zoom, on which part, and what to do when there is a zoom
     let zoom = d3
@@ -223,29 +241,35 @@ class Scatter {
         [0, 0],
         [WIDTH, HEIGHT],
       ])
-      .on("zoom", function (event) {
-        // recover the new scale
-        let newXScale = event.transform.rescaleX(xScale);
-        let newYScale = event.transform.rescaleY(yScale);
+      .on(
+        "zoom",
+        function (event) {
+          // recover the new scale
+          let newXScale = event.transform.rescaleX(this.xScale);
+          let newYScale = event.transform.rescaleY(this.yScale);
 
-        // update axes with these new boundaries
-        let xAxisCall = d3
-          .axisBottom(newXScale)
-          .tickFormat((x) => `${expo(x, 2)}`);
-        let yAxisCall = d3
-          .axisLeft(newYScale)
-          .tickFormat((y) => `${expo(y, 2)}`);
-        xAxisGroup.call(xAxisCall);
-        yAxisGroup.call(yAxisCall);
+          // update axes with these new boundaries
+          let xAxisCall = d3
+            .axisBottom(newXScale)
+            .tickFormat((x) => `${expo(x, 2)}`);
+          let yAxisCall = d3
+            .axisLeft(newYScale)
+            .tickFormat((y) => `${expo(y, 2)}`);
+          this.xAxisGroup.transition().duration(500).call(xAxisCall);
+          this.yAxisGroup.transition().duration(500).call(yAxisCall);
 
-        d3.selectAll(".dataCircle")
-          .data(finalData)
-          .attr("cy", (d) => newYScale(d[query2]))
-          .attr("cx", (d) => newXScale(d[query1]));
+          d3.selectAll(".dataCircle")
+            .data(finalData)
+            .attr("cy", (d) => newYScale(d[query2]))
+            .attr("cx", (d) => newXScale(d[query1]));
 
-        currXScale = newXScale;
-        currYScale = newYScale;
-      });
+          zoomedXScale = newXScale;
+          zoomedYScale = newYScale;
+        }.bind(this)
+      );
+
+    this.xScale = zoomedXScale;
+    this.yScale = zoomedYScale;
 
     let brush = d3
       .brush()
@@ -253,7 +277,42 @@ class Scatter {
         [0, 0],
         [WIDTH, HEIGHT],
       ])
-      .on("start brush end", brushed);
+      .on(
+        "start brush end",
+        function brushed(event) {
+          let xScale = this.xScale;
+          let yScale = this.yScale;
+          if (event.selection) {
+            if (view == "brush-on") {
+              d3.selectAll(".dataCircle")
+                .data(finalData)
+                .classed("selected", function (d) {
+                  return (
+                    d3.select(this).classed("selected") ||
+                    isBrushed(
+                      event.selection,
+                      xScale(d[query1]),
+                      yScale(d[query2])
+                    )
+                  );
+                });
+            } else if (view == "brush-off") {
+              d3.selectAll(".selected").classed("selected", function (d) {
+                return isBrushed(
+                  event.selection,
+                  xScale(d[query1]),
+                  yScale(d[query2])
+                )
+                  ? false
+                  : true;
+              });
+            }
+            let selected = [];
+            d3.selectAll(".selected").each((d, i) => selected.push(d));
+            setSelectedData(selected);
+          }
+        }.bind(this)
+      );
 
     let legend = this.legend.selectAll(".legend").data(data);
 
@@ -280,17 +339,20 @@ class Scatter {
 
     legend.exit().remove();
 
-    this.svg
-      .call(brush)
-
-    this.svg
-      .append("rect")
-      .attr("width", WIDTH + MARGIN.LEFT + MARGIN.RIGHT)
-      .attr("height", HEIGHT + MARGIN.TOP + MARGIN.BOTTOM)
-      .style("fill", "none")
-      .style("pointer-events", "all")
-      .attr("transform", `translate(${MARGIN.LEFT}, ${MARGIN.TOP})`)
-      .call(zoom);
+    if (view == "brush-on" || view == "brush-off") {
+      zoom.on("zoom", null)
+      this.svg.call(brush);
+    }
+    if (view == "zoom") {
+      brush.on("start brush end", null)
+      this.svg
+        .append("rect")
+        .attr("width", WIDTH)
+        .attr("height", HEIGHT)
+        .style("fill", "none")
+        .style("pointer-events", "all")
+        .call(zoom);
+    }
 
     let circles = this.svg
       .append("g")
@@ -306,6 +368,9 @@ class Scatter {
       .attr("r", circleOriginalSize)
       .attr("class", "dataCircle")
       .attr("fill", (d) => d.color)
+      .classed("selected", function (d) {
+        return selectedData.includes(d);
+      })
       .style("stroke", "none")
       .style("stroke-width", 2)
       .style("fill-opacity", 0.8)
@@ -313,28 +378,16 @@ class Scatter {
       .on("mouseover", mouseover)
       .on("mousemove", mousemove)
       .on("mouseleave", mouseleave)
-      .attr("cx", (d) => xScale(d[query1]))
-      .attr("cy", (d) => yScale(d[query2]));
+      .attr("cx", (d) => this.xScale(d[query1]))
+      .attr("cy", (d) => this.yScale(d[query2]));
 
     circles.exit().transition().attr("r", 0).remove();
-
-    function brushed(event) {
-      if (event.selection) {
-        d3.selectAll(".dataCircle")
-          .data(finalData)
-          .classed("selected", function (d) {
-            return d3.select(this).classed('selected') || isBrushed(
-              event.selection,
-              currXScale(d[query1]),
-              currYScale(d[query2])
-            );
-          });
-        let selected = [];
-        d3.selectAll(".selected").each((d, i) => selected.push(d));
-        setSelectedData(selected);
-      }
+    if(reset) {
+      this.svg.call(zoom.transform, d3.zoomIdentity);
+      d3.selectAll(".selected").classed("selected", false);
+      setSelectedData([]);
+      setReset(false)
     }
-  
   }
 }
 

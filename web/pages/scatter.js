@@ -19,6 +19,7 @@ export default function Scatter() {
   const [dataPoint, setDataPoint] = useState({});
   const [selectedDatasetNames, setSelectedDatasetNames] = useState([]);
   const [selectedData, setSelectedData] = useState([])
+  const [reset, setReset] = useState(false)
 
   const [query1, setQuery1] = useState("C11");
   const [query2, setQuery2] = useState("C12");
@@ -49,13 +50,13 @@ export default function Scatter() {
   };
 
   const handleRangeChange = (name, value) => {
-    let filteredDatasets = datasets.map((set, i) => {
+    let filtered_datasets = filteredDatasets.map((set, i) => {
       let filtered = set.data.filter(
         (d) => d[name] >= value[0] && d[name] <= value[1]
       );
       return { name: set.name, data: filtered, color: set.color };
     });
-    setFilteredDatasets(filteredDatasets);
+    setFilteredDatasets(filtered_datasets);
   };
 
   const datasetLinks = [
@@ -143,7 +144,10 @@ export default function Scatter() {
               setDataPoint={setDataPoint}
               query1={query1}
               query2={query2}
+              selectedData={selectedData}
               setSelectedData={setSelectedData}
+              reset={reset}
+              setReset={setReset}
             />
           </div>
           <div className={styles.subPlots}>
@@ -169,7 +173,7 @@ export default function Scatter() {
         </Row>
         <Row>
           <Col span={16}>
-          <SavePanel selectedData={selectedData}/>
+          <SavePanel selectedData={selectedData} setReset={setReset}/>
           </Col>
           <Col span={8}>
             <MaterialInformation dataPoint={dataPoint}/>

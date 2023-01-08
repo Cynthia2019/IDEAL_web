@@ -2,7 +2,6 @@ import styles from "../styles/Home.module.css";
 
 
 const MaterialInformation = ({dataPoint}) => {
-  console.log(dataPoint)
   return (
     <div className={styles.materialInformation}>
       <div className={styles["content-line"]}>
