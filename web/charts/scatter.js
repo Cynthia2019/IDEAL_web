@@ -90,7 +90,8 @@ class Scatter {
       this.query2,
       selectedData,
       setSelectedData,
-      view
+      view,
+      false
     );
   }
   //query1: x-axis
@@ -104,7 +105,9 @@ class Scatter {
     query2,
     selectedData,
     setSelectedData,
-    view
+    view,
+    reset,
+    setReset
   ) {
     this.data = data;
     this.query1 = query1;
@@ -344,8 +347,8 @@ class Scatter {
       brush.on("start brush end", null)
       this.svg
         .append("rect")
-        .attr("width", WIDTH + MARGIN.LEFT + MARGIN.RIGHT)
-        .attr("height", HEIGHT + MARGIN.TOP + MARGIN.BOTTOM)
+        .attr("width", WIDTH)
+        .attr("height", HEIGHT)
         .style("fill", "none")
         .style("pointer-events", "all")
         .call(zoom);
@@ -379,6 +382,12 @@ class Scatter {
       .attr("cy", (d) => this.yScale(d[query2]));
 
     circles.exit().transition().attr("r", 0).remove();
+    if(reset) {
+      this.svg.call(zoom.transform, d3.zoomIdentity);
+      d3.selectAll(".selected").classed("selected", false);
+      setSelectedData([]);
+      setReset(false)
+    }
   }
 }
 

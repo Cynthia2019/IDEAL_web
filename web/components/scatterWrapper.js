@@ -15,6 +15,8 @@ const ScatterWrapper = ({
   query2,
   selectedData,
   setSelectedData,
+  reset,
+  setReset
 }) => {
   const chartArea = useRef(null);
   const legendArea = useRef(null);
@@ -47,10 +49,12 @@ const ScatterWrapper = ({
         query2,
         selectedData,
         setSelectedData,
-        view
+        view,
+        reset,
+        setReset
       );
     }
-  }, [chart, query1, query2, data, view]);
+  }, [chart, query1, query2, data, view, reset]);
 
   return (
     <div style={{ display: "flex", flexDirection: "row" }}>

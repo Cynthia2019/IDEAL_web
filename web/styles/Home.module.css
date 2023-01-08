@@ -100,5 +100,13 @@
 
 .save-table-wrapper {
     width: 90%;
-    height: 90%;
+    height: 80%;
+}
+
+.save-table-button-group {
+    display: flex;
+}
+
+.save-table-button {
+    margin: 10px;
 }
