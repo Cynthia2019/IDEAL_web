@@ -4,10 +4,16 @@ class Pairwise_d3 {
 // Copyright 2021 Observable, Inc.
 // Released under the ISC license.
 // https://observablehq.com/@d3/splom
-    constructor(data, container) {
+    constructor(data, container, legendContainer) {
         this.container = container;
         // Compute values (and promote column names to accessors)
-        console.log(data);
+        this.legend = d3
+            .select(legendContainer)
+            .append("svg")
+            .attr("width", 120)
+            .append("g")
+            .attr("class", "pairwise-plot-legend");
+
         this.render(data,
             {
                 columns: [
@@ -262,7 +268,37 @@ class Pairwise_d3 {
         zDomain, // array of z-values
         fillOpacity = 0.7, // opacity of the dots
         colors = [], // array of colors for z
-    } = {}, container) {
+    } = {}, container, legendContainer) {
+        d3.select(legendContainer).selectAll(".legend").remove();
+
+        const circleSize = 3.5;
+        const legendCircleSize = 5.0;
+        const legendSpacing = 4;
+
+        let legend = this.legend.selectAll(".legend").data(data);
+
+        legend.exit().remove();
+
+        legend
+            .enter()
+            .append("circle")
+            .attr("class", "legend")
+            .attr("r", legendCircleSize)
+            .attr("cx", 10)
+            .attr("cy", (d, i) => (legendCircleSize * 2 + legendSpacing * 2) * i + 30)
+            .style("fill", (d) => d.color);
+        //Create legend labels
+        legend
+            .enter()
+            .append("text")
+            .attr("class", "legend")
+            .attr("x", 20)
+            .attr("y", (d, i) => (legendCircleSize * 2 + legendSpacing * 2) * i + 30)
+            .text((d) => d.name)
+            .attr("text-anchor", "left")
+            .style("alignment-baseline", "middle");
+
+        legend.exit().remove();
         console.log("updating...");
         let datasets = [];
         data.map((d, i) => {
@@ -307,7 +343,7 @@ class Pairwise_d3 {
                     //.data(finalData)
                     .data(I.filter(i => !isNaN(X[x][i]) && !isNaN(Y[y][i])))
                     .join("circle")
-                    .attr("r", 3.5)
+                    .attr("r", circleSize)
                     .attr("cx", i => xScales[x](X[x][i]))
                     .attr("cy", i => yScales[y](Y[y][i]))
                     .attr("fill", (i) => finalData[i].color);
