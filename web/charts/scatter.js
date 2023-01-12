@@ -341,12 +341,14 @@ class Scatter {
 
     if (view == "brush-on" || view == "brush-off") {
       zoom.on("zoom", null)
+      this.svg.selectAll(".rectZoom").remove()
       this.svg.call(brush);
     }
     if (view == "zoom") {
       brush.on("start brush end", null)
       this.svg
         .append("rect")
+        .attr("class", "rectZoom")
         .attr("width", WIDTH)
         .attr("height", HEIGHT)
         .style("fill", "none")
